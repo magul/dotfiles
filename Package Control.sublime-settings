@@ -5,6 +5,7 @@
 	"installed_packages":
 	[
 		"Anaconda",
-		"Package Control"
+		"Package Control",
+		"SideBarEnhancements"
 	]
 }
