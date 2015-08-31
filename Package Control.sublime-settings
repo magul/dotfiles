@@ -7,6 +7,7 @@
 		"Anaconda",
 		"BracketHighlighter",
 		"Package Control",
-		"SideBarEnhancements"
+		"SideBarEnhancements",
+		"SublimeCodeIntel"
 	]
 }
