@@ -2,5 +2,6 @@
 	"ignored_packages":
 	[
 		"Vintage"
-	]
+	],
+	"draw_white_space": "all"
 }
