@@ -1,0 +1,4 @@
+<snippet>
+    <content>import pdb; pdb.set_trace()</content>
+    <tabTrigger>pdb</tabTrigger>
+</snippet>
