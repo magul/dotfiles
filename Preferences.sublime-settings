@@ -3,5 +3,6 @@
 	[
 		"Vintage"
 	],
-	"draw_white_space": "all"
+	"draw_white_space": "all",
+	"rulers": [80],
 }
