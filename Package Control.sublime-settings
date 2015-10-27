@@ -16,6 +16,8 @@
 		"Puppet",
 		"SideBarEnhancements",
 		"SublimeCodeIntel",
+		"SublimeLinter",
+		"SublimeLinter-contrib-eslint",
 		"Syntax Highlighting for Sass"
 	]
 }
