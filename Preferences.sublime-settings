@@ -9,5 +9,6 @@
 	"rulers":
 	[
 		80
-	]
+	],
+	"folder_exclude_patterns": ["node_modules"]
 }
