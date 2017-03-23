@@ -23,6 +23,7 @@
 		"SublimeCodeIntel",
 		"SublimeLinter",
 		"SublimeLinter-contrib-eslint",
-		"Syntax Highlighting for Sass"
+		"Syntax Highlighting for Sass",
+		"TypeScript"
 	]
 }
