@@ -28,6 +28,7 @@
 		"SublimeLinter-eslint",
 		"Syntax Highlighting for Sass",
 		"Terraform",
-		"TypeScript"
+		"TypeScript",
+		"Vue Syntax Highlight"
 	]
 }
