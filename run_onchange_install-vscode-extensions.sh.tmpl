@@ -1,0 +1,17 @@
+#!/bin/bash
+# Install Visual Studio Code extensions
+# hash: {{ include "dot_config/Code/User/extensions.txt" | sha256sum }}
+set -euo pipefail
+
+if ! command -v code &>/dev/null; then
+    echo "VS Code not found, skipping extension installation."
+    exit 0
+fi
+
+echo "Installing VS Code extensions..."
+while IFS= read -r extension || [ -n "$extension" ]; do
+    [ -z "$extension" ] && continue
+    [[ "$extension" =~ ^# ]] && continue
+    code --install-extension "$extension" --force 2>/dev/null || echo "  Failed to install: $extension"
+done < {{ joinPath .chezmoi.sourceDir "dot_config/Code/User/extensions.txt" | quote }}
+echo "VS Code extensions installation complete."

@@ -1,0 +1,5 @@
+{
+    "claudeCode.preferredLocation": "panel",
+    "chat.agent.enabled": false,
+    "workbench.secondarySideBar.defaultVisibility": "hidden"
+}

@@ -1,0 +1,24 @@
+# VS Code Extensions — managed by chezmoi
+# This file is used by run_onchange_install-vscode-extensions.sh
+# Add or remove extensions here; chezmoi will re-run the installer on change.
+
+# AI
+anthropic.claude-code
+
+# Git
+eamodio.gitlens
+
+# CI/CD
+github.vscode-github-actions
+
+# Infrastructure
+hashicorp.terraform
+
+# Python
+ms-python.debugpy
+ms-python.python
+ms-python.vscode-pylance
+ms-python.vscode-python-envs
+
+# Build tools
+ms-vscode.makefile-tools
