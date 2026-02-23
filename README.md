@@ -82,10 +82,25 @@ dot_bashrc
 
 ```
 .
-├── .chezmoi.toml.tmpl   # chezmoi config — prompts for name/email on init
-├── .chezmoiignore       # files to exclude from home directory
+├── .chezmoi.toml.tmpl          # chezmoi config — prompts for name/email on init
+├── .chezmoiignore              # files to exclude from home directory
 ├── .gitignore
+├── dot_config/
+│   ├── Code/User/
+│   │   ├── extensions.txt      # VS Code extensions list
+│   │   ├── keybindings.json    # VS Code keybindings
+│   │   └── settings.json       # VS Code settings
+│   ├── nvim/
+│   │   └── init.lua            # Neovim configuration
+│   ├── opencode/
+│   │   └── opencode.json       # OpenCode configuration
+│   └── shell/
+│       └── aliases.sh          # shared shell aliases
+├── dot_zprofile.tmpl           # ~/.zprofile (OS-specific)
+├── dot_zshrc.tmpl              # ~/.zshrc (OS-specific)
+├── run_onchange_install-neovim.sh.tmpl       # auto-installs Neovim
+├── run_onchange_install-oh-my-zsh.sh         # auto-installs Oh My Zsh
+├── run_onchange_install-vscode-extensions.sh.tmpl  # auto-installs VS Code extensions
+├── LICENSE
 └── README.md
 ```
-
-Dotfiles will be added here incrementally.

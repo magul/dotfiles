@@ -1,0 +1,16 @@
+#!/bin/bash
+# Install Neovim if not already installed
+set -euo pipefail
+
+if command -v nvim &>/dev/null; then
+    echo "Neovim is already installed: $(nvim --version | head -1)"
+    exit 0
+fi
+
+echo "Installing Neovim..."
+{{ if eq .chezmoi.os "darwin" -}}
+brew install neovim
+{{ else if eq .chezmoi.os "linux" -}}
+sudo apt-get update && sudo apt-get install -y neovim
+{{ end -}}
+echo "Neovim installed: $(nvim --version | head -1)"
