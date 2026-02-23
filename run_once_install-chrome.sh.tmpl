@@ -1,0 +1,29 @@
+#!/bin/bash
+# Install Google Chrome
+set -euo pipefail
+
+if command -v google-chrome &>/dev/null || command -v google-chrome-stable &>/dev/null; then
+    echo "Google Chrome is already installed."
+    exit 0
+fi
+
+{{ if eq .chezmoi.os "linux" -}}
+echo "Installing Google Chrome via apt..."
+sudo apt-get install -y wget gpg
+wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /usr/share/keyrings/google-chrome.gpg >/dev/null
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null
+sudo apt-get update
+sudo apt-get install -y google-chrome-stable
+{{ else if eq .chezmoi.os "darwin" -}}
+echo "Installing Google Chrome via Homebrew..."
+if ! command -v brew &>/dev/null; then
+    echo "Error: Homebrew is not installed." >&2
+    exit 1
+fi
+brew install --cask google-chrome
+{{ else -}}
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}
+
+echo "Google Chrome installation complete."

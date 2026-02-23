@@ -1,0 +1,87 @@
+#!/bin/bash
+# Install Obsidian
+set -euo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+APPIMAGE_DIR="$HOME/Applications"
+APPIMAGE_PATH="$APPIMAGE_DIR/Obsidian.AppImage"
+
+
+if [ -f "$APPIMAGE_PATH" ]; then
+    echo "Obsidian AppImage is already installed."
+    exit 0
+fi
+
+echo "Installing Obsidian AppImage..."
+
+# AppImages require FUSE to run; Ubuntu 22.04+ ships FUSE 3 but
+# AppImages need the FUSE 2 library
+if ! dpkg -s libfuse2t64 &>/dev/null && ! dpkg -s libfuse2 &>/dev/null; then
+    echo "Installing libfuse2 (required for AppImages)..."
+    sudo apt-get update
+    sudo apt-get install -y libfuse2t64 2>/dev/null || sudo apt-get install -y libfuse2
+fi
+
+mkdir -p "$APPIMAGE_DIR"
+
+# Fetch all AppImage URLs from the latest release
+ALL_URLS=$(curl -fsSL https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest \
+    | grep -o '"browser_download_url": *"[^"]*\.AppImage"' \
+    | cut -d'"' -f4)
+
+# Pick the correct architecture
+# Obsidian names: Obsidian-X.Y.Z.AppImage (x86_64), Obsidian-X.Y.Z-arm64.AppImage (aarch64)
+ARCH=$(uname -m)
+case "$ARCH" in
+    x86_64)
+        # Select the URL without an arch suffix (not arm64/aarch64)
+        DOWNLOAD_URL=$(echo "$ALL_URLS" | grep -v -i -E 'arm64|aarch64' | head -1)
+        ;;
+    aarch64)
+        DOWNLOAD_URL=$(echo "$ALL_URLS" | grep -i -E 'arm64|aarch64' | head -1)
+        ;;
+    *)
+        echo "Error: Unsupported architecture: $ARCH" >&2
+        exit 1
+        ;;
+esac
+
+if [ -z "$DOWNLOAD_URL" ]; then
+    echo "Error: Could not determine latest Obsidian AppImage URL." >&2
+    exit 1
+fi
+
+curl -fSL "$DOWNLOAD_URL" -o "$APPIMAGE_PATH"
+chmod +x "$APPIMAGE_PATH"
+
+# Create a .desktop entry for application launchers
+DESKTOP_FILE="$HOME/.local/share/applications/obsidian.desktop"
+mkdir -p "$(dirname "$DESKTOP_FILE")"
+cat > "$DESKTOP_FILE" <<EOF
+[Desktop Entry]
+Name=Obsidian
+Exec=$APPIMAGE_PATH --no-sandbox %u
+Type=Application
+Icon=obsidian
+Categories=Office;
+MimeType=x-scheme-handler/obsidian;
+EOF
+
+{{ else if eq .chezmoi.os "darwin" -}}
+if [ -d "/Applications/Obsidian.app" ]; then
+    echo "Obsidian is already installed."
+    exit 0
+fi
+
+echo "Installing Obsidian via Homebrew..."
+if ! command -v brew &>/dev/null; then
+    echo "Error: Homebrew is not installed." >&2
+    exit 1
+fi
+brew install --cask obsidian
+{{ else -}}
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}
+
+echo "Obsidian installation complete."
