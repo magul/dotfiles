@@ -1,7 +1,0 @@
-<snippet>
-    <content>import sys
-import pdb
-sys.stdout = sys.__stdout__
-pdb.set_trace()</content>
-    <tabTrigger>pdb</tabTrigger>
-</snippet>

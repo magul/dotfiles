@@ -1,4 +1,0 @@
-<snippet>
-    <content>import rpdb; rpdb.set_trace()</content>
-    <tabTrigger>rpdb</tabTrigger>
-</snippet>
