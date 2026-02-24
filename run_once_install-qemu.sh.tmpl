@@ -1,0 +1,36 @@
+#!/bin/bash
+# Install QEMU and related virtualization tools
+set -euo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+if command -v qemu-system-x86_64 &>/dev/null; then
+    echo "QEMU is already installed."
+    exit 0
+fi
+
+echo "Installing QEMU and virtualization tools..."
+sudo apt-get update
+sudo apt-get install -y \
+    qemu-system \
+    qemu-utils \
+    qemu-user-static \
+    libvirt-daemon-system \
+    libvirt-clients \
+    virtinst \
+    virt-manager \
+    bridge-utils \
+    ovmf
+
+# Add user to libvirt and kvm groups for non-root access
+sudo usermod -aG libvirt "$USER"
+sudo usermod -aG kvm "$USER"
+
+# Enable and start libvirtd
+sudo systemctl enable --now libvirtd
+
+echo "QEMU installation complete."
+echo "NOTE: Log out and back in for group membership to take effect."
+{{ else -}}
+echo "QEMU installation is only supported on Linux for now." >&2
+exit 0
+{{ end -}}

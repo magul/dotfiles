@@ -1,0 +1,37 @@
+#!/bin/bash
+# Install vm-curator — TUI for managing QEMU/KVM virtual machines
+# https://github.com/mroboff/vm-curator
+set -euo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+if command -v vm-curator &>/dev/null; then
+    echo "vm-curator is already installed."
+    exit 0
+fi
+
+echo "Installing vm-curator..."
+
+# Fetch the latest .deb URL from GitHub releases
+ARCH=$(dpkg --print-architecture)
+DEB_URL=$(curl -fsSL https://api.github.com/repos/mroboff/vm-curator/releases/latest \
+    | grep -o '"browser_download_url": *"[^"]*\.deb"' \
+    | cut -d'"' -f4 \
+    | grep "${ARCH}" \
+    | head -1)
+
+if [ -z "$DEB_URL" ]; then
+    echo "Error: Could not find a .deb package for architecture ${ARCH}." >&2
+    exit 1
+fi
+
+TMP_DEB=$(mktemp /tmp/vm-curator-XXXXXX.deb)
+curl -fSL "$DEB_URL" -o "$TMP_DEB"
+chmod 644 "$TMP_DEB"
+sudo apt-get install -y "$TMP_DEB"
+rm -f "$TMP_DEB"
+
+echo "vm-curator installation complete."
+{{ else -}}
+echo "vm-curator installation is only supported on Linux for now." >&2
+exit 0
+{{ end -}}
