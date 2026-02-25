@@ -1,6 +1,7 @@
 #!/bin/bash
-# Install vm-curator — TUI for managing QEMU/KVM virtual machines
-# https://github.com/mroboff/vm-curator
+# Install VM management tools:
+#   Linux: vm-curator — TUI for managing QEMU/KVM virtual machines
+#   macOS: UTM — QEMU-based GUI VM manager with utmctl CLI
 set -euo pipefail
 
 {{ if eq .chezmoi.os "linux" -}}
@@ -31,7 +32,17 @@ sudo apt-get install -y "$TMP_DEB"
 rm -f "$TMP_DEB"
 
 echo "vm-curator installation complete."
+{{ else if eq .chezmoi.os "darwin" -}}
+if [ -d "/Applications/UTM.app" ]; then
+    echo "UTM is already installed."
+    exit 0
+fi
+
+echo "Installing UTM via Homebrew..."
+brew install --cask utm
+
+echo "UTM installation complete."
 {{ else -}}
-echo "vm-curator installation is only supported on Linux for now." >&2
-exit 0
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
 {{ end -}}

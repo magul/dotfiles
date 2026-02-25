@@ -30,7 +30,17 @@ sudo systemctl enable --now libvirtd
 
 echo "QEMU installation complete."
 echo "NOTE: Log out and back in for group membership to take effect."
+{{ else if eq .chezmoi.os "darwin" -}}
+if command -v qemu-system-aarch64 &>/dev/null; then
+    echo "QEMU is already installed."
+    exit 0
+fi
+
+echo "Installing QEMU..."
+brew install qemu
+
+echo "QEMU installation complete."
 {{ else -}}
-echo "QEMU installation is only supported on Linux for now." >&2
-exit 0
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
 {{ end -}}
