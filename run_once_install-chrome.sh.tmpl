@@ -2,7 +2,7 @@
 # Install Google Chrome
 set -euo pipefail
 
-if command -v google-chrome &>/dev/null || command -v google-chrome-stable &>/dev/null; then
+if command -v google-chrome &>/dev/null || command -v google-chrome-stable &>/dev/null || [ -d "/Applications/Google Chrome.app" ]; then
     echo "Google Chrome is already installed."
     exit 0
 fi
