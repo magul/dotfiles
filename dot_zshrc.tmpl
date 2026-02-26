@@ -35,8 +35,9 @@ export PATH="$HOME/.opencode/bin:$PATH"
 # pyenv
 # ---------------------------------------------------------------------------
 export PYENV_ROOT="$HOME/.pyenv"
-if [ -d "$PYENV_ROOT/bin" ]; then
-    export PATH="$PYENV_ROOT/bin:$PATH"
+# Add pyenv to PATH if installed from source/pyenv-installer (not needed for Homebrew)
+[ -d "$PYENV_ROOT/bin" ] && export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv &>/dev/null; then
     eval "$(pyenv init - zsh)"
     eval "$(pyenv virtualenv-init -)"
 fi

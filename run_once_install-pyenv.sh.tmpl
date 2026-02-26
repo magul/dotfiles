@@ -1,0 +1,40 @@
+#!/bin/bash
+# Install pyenv and pyenv-virtualenv if not already installed
+set -euo pipefail
+
+if command -v pyenv &>/dev/null; then
+    echo "pyenv is already installed: $(pyenv --version)"
+    exit 0
+fi
+
+echo "Installing pyenv..."
+
+{{ if eq .chezmoi.os "linux" -}}
+# Install build dependencies for building Python versions
+sudo apt-get update
+sudo apt-get install -y \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    curl \
+    libncursesw5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev
+
+# Install pyenv via the official installer
+curl -fsSL https://pyenv.run | bash
+{{ else if eq .chezmoi.os "darwin" -}}
+brew install pyenv pyenv-virtualenv
+{{ else -}}
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}
+
+echo "pyenv installed: $(pyenv --version)"
