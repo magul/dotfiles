@@ -1,0 +1,19 @@
+#!/bin/bash
+# Install claude-code — Anthropic's official CLI for Claude
+# https://github.com/anthropics/claude-code
+set -euo pipefail
+
+{{ if or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin") -}}
+if command -v claude &>/dev/null; then
+    echo "claude-code is already installed."
+    exit 0
+fi
+
+echo "Installing claude-code..."
+curl -fsSL https://claude.ai/install.sh | bash
+
+echo "claude-code installation complete."
+{{ else -}}
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}
