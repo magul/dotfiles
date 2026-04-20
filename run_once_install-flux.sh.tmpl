@@ -1,0 +1,25 @@
+#!/bin/bash
+# Install Flux (GitOps toolkit for Kubernetes)
+set -euo pipefail
+
+if command -v flux &>/dev/null; then
+    echo "Flux is already installed: $(flux version --client 2>/dev/null | head -1)"
+    exit 0
+fi
+
+echo "Installing Flux..."
+
+{{ if eq .chezmoi.os "linux" -}}
+curl -s https://fluxcd.io/install.sh | sudo bash
+{{ else if eq .chezmoi.os "darwin" -}}
+if ! command -v brew &>/dev/null; then
+    echo "Error: Homebrew is not installed." >&2
+    exit 1
+fi
+brew install fluxcd/tap/flux
+{{ else -}}
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}
+
+echo "Flux installed: $(flux version --client 2>/dev/null | head -1)"
