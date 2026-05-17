@@ -72,6 +72,11 @@ fi
 # Linux-specific settings
 {{- end }}
 # ---------------------------------------------------------------------------
+# Grafana / Terraform secrets (not tracked by chezmoi)
+# ---------------------------------------------------------------------------
+[ -f "$HOME/.config/secrets/grafana.env" ] && source "$HOME/.config/secrets/grafana.env"
+
+# ---------------------------------------------------------------------------
 # Local overrides (not tracked by chezmoi)
 # ---------------------------------------------------------------------------
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
