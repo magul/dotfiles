@@ -36,6 +36,11 @@ if command -v qemu-system-aarch64 &>/dev/null; then
     exit 0
 fi
 
+if ! command -v brew &>/dev/null; then
+    echo "Error: Homebrew is not installed." >&2
+    exit 1
+fi
+
 echo "Installing QEMU..."
 brew install qemu
 
