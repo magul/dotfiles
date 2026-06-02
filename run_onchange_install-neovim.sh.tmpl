@@ -9,10 +9,7 @@ fi
 
 echo "Installing Neovim..."
 {{ if eq .chezmoi.os "darwin" -}}
-if ! command -v brew &>/dev/null; then
-    echo "Error: Homebrew is not installed." >&2
-    exit 1
-fi
+{{ template "ensure-homebrew" . -}}
 brew install neovim
 {{ else if eq .chezmoi.os "linux" -}}
 sudo apt-get update && sudo apt-get install -y neovim

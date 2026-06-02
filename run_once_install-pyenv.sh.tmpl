@@ -31,10 +31,7 @@ sudo apt-get install -y \
 # Install pyenv via the official installer
 curl -fsSL https://pyenv.run | bash
 {{ else if eq .chezmoi.os "darwin" -}}
-if ! command -v brew &>/dev/null; then
-    echo "Error: Homebrew is not installed." >&2
-    exit 1
-fi
+{{ template "ensure-homebrew" . -}}
 brew install pyenv pyenv-virtualenv
 {{ else -}}
 echo "Unsupported OS: {{ .chezmoi.os }}" >&2

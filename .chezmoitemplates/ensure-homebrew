@@ -1,0 +1,14 @@
+# Ensure brew is on PATH (it lives outside the default login PATH on Apple Silicon),
+# then fail clearly if Homebrew still isn't available.
+if ! command -v brew &>/dev/null; then
+    for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+        if [ -x "$_brew" ]; then
+            eval "$("$_brew" shellenv)"
+            break
+        fi
+    done
+fi
+if ! command -v brew &>/dev/null; then
+    echo "Error: Homebrew is not installed." >&2
+    exit 1
+fi

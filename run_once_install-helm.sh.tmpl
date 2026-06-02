@@ -12,10 +12,7 @@ echo "Installing Helm..."
 {{ if eq .chezmoi.os "linux" -}}
 curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
 {{ else if eq .chezmoi.os "darwin" -}}
-if ! command -v brew &>/dev/null; then
-    echo "Error: Homebrew is not installed." >&2
-    exit 1
-fi
+{{ template "ensure-homebrew" . -}}
 brew install helm
 {{ else -}}
 echo "Unsupported OS: {{ .chezmoi.os }}" >&2

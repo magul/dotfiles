@@ -21,10 +21,7 @@ curl -fsSL "https://github.com/derailed/k9s/releases/download/${LATEST}/k9s_Linu
 sudo mv /tmp/k9s /usr/local/bin/k9s
 sudo chmod +x /usr/local/bin/k9s
 {{ else if eq .chezmoi.os "darwin" -}}
-if ! command -v brew &>/dev/null; then
-    echo "Error: Homebrew is not installed." >&2
-    exit 1
-fi
+{{ template "ensure-homebrew" . -}}
 brew install k9s
 {{ else -}}
 echo "Unsupported OS: {{ .chezmoi.os }}" >&2

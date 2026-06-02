@@ -1,4 +1,13 @@
 
+{{ if eq .chezmoi.os "darwin" -}}
+# Homebrew
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+{{ end -}}
+
 # Created by `pipx` on 2025-10-19 15:36:53
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$HOME/.tfenv/bin:$PATH"

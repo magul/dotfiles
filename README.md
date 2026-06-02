@@ -16,7 +16,9 @@ On Windows (PowerShell):
 irm get.chezmoi.io/ps1 | iex; chezmoi init --apply magul
 ```
 
-On first run chezmoi will prompt for your name and email.
+On first run chezmoi will prompt for your name and email. On macOS, Homebrew is
+installed automatically (before the other install scripts run) if it isn't
+already present.
 
 ## Manual setup
 
