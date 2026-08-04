@@ -1,0 +1,22 @@
+#!/bin/bash
+# Install jq (JSON processor) — required by ~/.claude/statusline.sh
+set -euo pipefail
+
+if command -v jq &>/dev/null; then
+    echo "jq is already installed: $(jq --version)"
+    exit 0
+fi
+
+echo "Installing jq..."
+
+{{ if eq .chezmoi.os "linux" -}}
+sudo apt-get update && sudo apt-get install -y jq
+{{ else if eq .chezmoi.os "darwin" -}}
+{{ template "ensure-homebrew" . -}}
+brew install jq
+{{ else -}}
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}
+
+echo "jq installed: $(jq --version)"

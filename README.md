@@ -56,6 +56,7 @@ This repo **is** the chezmoi source directory. Files here map to your home direc
 | `dot_gitconfig` | `~/.gitconfig` | `dot_` prefix becomes `.` |
 | `dot_zshrc.tmpl` | `~/.zshrc` | `.tmpl` suffix = template |
 | `private_dot_ssh/config` | `~/.ssh/config` | `private_` = 0600 permissions |
+| `private_dot_claude/executable_statusline.sh` | `~/.claude/statusline.sh` | `executable_` = +x permission |
 | `run_onchange_install.sh.tmpl` | *(executed)* | Script, re-runs when content changes |
 
 Templates can use `{{ .chezmoi.os }}` (`linux`, `darwin`, `windows`) to vary content per OS.
@@ -98,6 +99,9 @@ dot_bashrc
 │   │   └── opencode.json       # OpenCode configuration
 │   └── shell/
 │       └── aliases.sh          # shared shell aliases
+├── private_dot_claude/
+│   ├── settings.json           # Claude Code settings (model, statusline, voice)
+│   └── executable_statusline.sh  # Claude Code statusline script (needs jq)
 ├── dot_zprofile.tmpl           # ~/.zprofile (OS-specific)
 ├── dot_zshrc.tmpl              # ~/.zshrc (OS-specific)
 ├── run_onchange_install-neovim.sh.tmpl       # auto-installs Neovim
