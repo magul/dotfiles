@@ -481,6 +481,7 @@ require('lazy').setup({
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
       { 'mason-org/mason.nvim', opts = {} },
+      'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
@@ -620,6 +621,14 @@ require('lazy').setup({
       })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      -- Provides the lspconfig-name -> mason-package-name mapping that
+      -- mason-tool-installer needs (e.g. `lua_ls` -> `lua-language-server`).
+      -- Servers are enabled explicitly below, so don't let it enable them too.
+      require('mason-lspconfig').setup {
+        ensure_installed = {},
+        automatic_enable = false,
+      }
 
       for name, server in pairs(servers) do
         server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
