@@ -13,7 +13,7 @@ echo "Installing Hunk..."
 # Official installer picks the right darwin/linux-{x86_64,aarch64} archive, verifies it
 # against the release SHA256SUMS, and installs to ~/.hunk/bin with the bundled agent
 # skills beside it at ~/.hunk/skills (where `hunk skill path` looks). The default install
-# dir is kept so the skills tree stays out of ~/.local/bin; ~/.zprofile puts it on PATH.
+# dir is kept so the skills tree stays out of ~/.local/bin; ~/.zshrc puts it on PATH.
 export HUNK_NO_MODIFY_PATH=1
 curl -fsSL https://hunk.dev/install.sh | sh
 export PATH="$HOME/.hunk/bin:$PATH"
