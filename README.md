@@ -93,6 +93,8 @@ dot_bashrc
 │   │   ├── extensions.txt      # VS Code extensions list
 │   │   ├── keybindings.json    # VS Code keybindings
 │   │   └── settings.json       # VS Code settings
+│   ├── hunk/
+│   │   └── config.toml         # Hunk diff viewer configuration
 │   ├── nvim/
 │   │   └── init.lua            # Neovim configuration
 │   ├── opencode/
