@@ -1,0 +1,36 @@
+#!/bin/bash
+# Install Codex (OpenAI's terminal coding agent)
+# https://github.com/openai/codex
+set -euo pipefail
+
+if command -v codex &>/dev/null; then
+    echo "Codex is already installed: $(codex --version 2>/dev/null | head -1)"
+    exit 0
+fi
+
+echo "Installing Codex..."
+
+{{ if eq .chezmoi.os "linux" -}}
+# npm is the route OpenAI documents for Linux; the package pulls the matching
+# @openai/codex-linux-{x64,arm64} binary, which carries the same sandbox/exec
+# helpers (bwrap, rg) as the release tarball behind a small Node shim.
+# Nothing here installs node, so fail with a clear message instead of a
+# "npm: command not found" from set -e.
+if ! command -v npm &>/dev/null; then
+    echo "Error: npm is required to install Codex on Linux (install node first)." >&2
+    exit 1
+fi
+# Under nvm, -g installs into the active node version's prefix, so Codex has to
+# be reinstalled after switching or upgrading node.
+npm install -g @openai/codex
+{{ else if eq .chezmoi.os "darwin" -}}
+{{ template "ensure-homebrew" . -}}
+# Codex lives in homebrew-cask, not homebrew-core; the cask symlinks bin/codex
+# into the Homebrew prefix and generates the zsh completions.
+brew install --cask codex
+{{ else -}}
+echo "Unsupported OS: {{ .chezmoi.os }}" >&2
+exit 1
+{{ end -}}
+
+echo "Codex installed: $(codex --version 2>/dev/null | head -1)"
