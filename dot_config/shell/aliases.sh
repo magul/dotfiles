@@ -29,5 +29,6 @@ alias gc='git commit'
 # ---------------------------------------------------------------------------
 # Misc
 # ---------------------------------------------------------------------------
+alias codex='codex --profile dotfiles'
 alias path='echo -e ${PATH//:/\\n}'
 alias reload='exec $SHELL -l'

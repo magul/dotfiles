@@ -104,6 +104,8 @@ dot_bashrc
 ├── private_dot_claude/
 │   ├── settings.json           # Claude Code settings (model, statusline, voice)
 │   └── executable_statusline.sh  # Claude Code statusline script (needs jq)
+├── private_dot_codex/
+│   └── private_dotfiles.config.toml # Codex profile
 ├── dot_zprofile.tmpl           # ~/.zprofile (OS-specific)
 ├── dot_zshrc.tmpl              # ~/.zshrc (OS-specific)
 ├── run_once_install-hunk.sh.tmpl             # auto-installs Hunk (terminal diff viewer)
