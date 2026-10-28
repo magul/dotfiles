@@ -16,7 +16,8 @@ On Windows (PowerShell):
 irm get.chezmoi.io/ps1 | iex; chezmoi init --apply magul
 ```
 
-On first run chezmoi will prompt for your name and email. On macOS, Homebrew is
+On first run chezmoi will prompt for your name, email, and machine role
+(`desktop` or `server`). On macOS, Homebrew is
 installed automatically (before the other install scripts run) if it isn't
 already present.
 
@@ -46,6 +47,30 @@ chezmoi diff                       # preview pending changes
 chezmoi apply                      # apply changes to home directory
 chezmoi update                     # pull remote changes and apply
 ```
+
+## Machine role
+
+The OS is detected automatically; `role` selects desktop or server behavior
+independently of macOS/Linux. Desktop machines receive all configured tools.
+Servers skip Chrome, Obsidian, Handy, VS Code, VS Code extensions and settings,
+QEMU, the VM manager (vm-curator on Linux, UTM on macOS), and vm-curator settings.
+Shell configuration and other CLI tools (including coding agents) remain enabled
+for both roles.
+
+On an existing machine, run `chezmoi edit-config` and add `role` to the existing
+`[data]` section (preserve your other entries):
+
+```toml
+[data]
+    role = "server" # or "desktop"
+```
+
+Then run `chezmoi diff` and `chezmoi apply`. Machines without a role retain
+desktop behavior until one is selected. Switching to server skips management
+of the desktop files and installers; it does not remove existing files or
+uninstall applications. Switching back to desktop makes those files managed
+again; installers that already ran remain subject to chezmoi's normal
+`run_once`/`run_onchange` tracking.
 
 ## How it works
 

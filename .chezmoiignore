@@ -1,2 +1,19 @@
 README.md
 LICENSE
+
+{{- /* Preserve desktop behavior for machines initialized before role existed. */ -}}
+{{- $role := get . "role" | default "desktop" -}}
+{{- if not (has $role (list "desktop" "server")) -}}
+{{- fail "role must be desktop or server" -}}
+{{- end }}
+{{ if eq $role "server" -}}
+.config/Code
+.config/vm-curator
+install-chrome.sh
+install-obsidian.sh
+install-handy.sh
+install-vscode.sh
+install-vscode-extensions.sh
+install-qemu.sh
+install-vm-manager.sh
+{{ end -}}

@@ -1,6 +1,11 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $name  := promptStringOnce . "name"  "Full name" -}}
+{{- $role := promptChoiceOnce . "role" "Machine role" (list "desktop" "server") -}}
+{{- if not (has $role (list "desktop" "server")) -}}
+{{- fail "role must be desktop or server" -}}
+{{- end -}}
 
 [data]
     email = {{ $email | quote }}
     name  = {{ $name  | quote }}
+    role  = {{ $role  | quote }}
