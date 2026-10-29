@@ -29,7 +29,11 @@ sudo apt-get install -y \
     liblzma-dev
 
 # Install pyenv via the official installer
-curl -fsSL https://pyenv.run | bash
+if [ ! -x "${PYENV_ROOT:-$HOME/.pyenv}/bin/pyenv" ]; then
+    curl -fsSL https://pyenv.run | bash
+fi
+export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
+export PATH="$PYENV_ROOT/bin:$PATH"
 {{ else if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 brew install pyenv pyenv-virtualenv
