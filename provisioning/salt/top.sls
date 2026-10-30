@@ -5,3 +5,6 @@ base:
     - match: compound
     - jq
     - neovim
+{% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
+    - vscode
+{% endif %}

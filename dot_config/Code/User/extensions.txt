@@ -1,6 +1,6 @@
 # VS Code Extensions — managed by chezmoi
-# This file is used by run_onchange_install-vscode-extensions.sh
-# Add or remove extensions here; chezmoi will re-run the installer on change.
+# Salt reads this list on Debian/Ubuntu; the chezmoi installer reads it on macOS.
+# Add extensions here, then apply provisioning. Removal does not uninstall them.
 
 # AI
 anthropic.claude-code

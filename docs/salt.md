@@ -15,7 +15,9 @@ First install chezmoi and initialize this repository using the main README's
 bootstrap instructions. Install Salt separately using the steps below, then run
 the stack to install the software it manages. Complete both steps when setting
 up a machine; chezmoi alone does not install software already migrated to Salt.
-These instructions cover Debian/Ubuntu and macOS; the runner requires Bash.
+These instructions cover Debian/Ubuntu and macOS; the runner requires Bash,
+Python 3, and chezmoi. On Debian/Ubuntu, install Python with
+`sudo apt-get install -y python3` if needed; on macOS, use `brew install python`.
 
 ### Debian / Ubuntu
 
@@ -88,8 +90,17 @@ apply uses `test=False`. The runner returns Salt's failure status.
 The runner uses the repository's configuration and state tree, and removes its
 private temporary cache and keys
 after each run. It does not modify `/etc/salt`. It runs with the invoking user's
-privileges and never invokes sudo itself. Future user-tool states must explicitly
-retain their intended user and home directory when Salt runs as root.
+privileges. When invoked through sudo, it reads the original user's chezmoi
+configuration through `sudo -H -u "$SUDO_USER"`. Run from your normal account,
+using sudo for system provisioning; direct root logins are rejected.
+
+The runner passes your existing chezmoi `desktop`/`server` role and account into
+Salt as local pillar data. A missing role retains chezmoi's legacy desktop
+default; an invalid role or unreadable configuration stops provisioning.
+Desktop-only states are skipped on servers. Changing the role to server does
+not uninstall existing desktop software. User commands run as the original
+user with their home and XDG directories, rather than installing into root's
+account. Chezmoi continues to manage application settings and declarative lists.
 
 ## Apply changes committed later
 
@@ -126,8 +137,8 @@ official installation guide before changing the pinned major version.
 Add an SLS file under `provisioning/salt/` and list its name in `top.sls`.
 Express dependencies using Salt requisites such as `require`. Disable the
 corresponding chezmoi installation branch when Salt takes ownership, preserving
-other platforms until their states are ready. Keep machine role selection in
-chezmoi; pass it explicitly into Salt when role-dependent states are introduced.
+other platforms until their states are ready. Read the machine role and target
+account from the `dotfiles` pillar; chezmoi remains the source of role selection.
 
 Validate with a preview, an apply, and a second apply that reports no changes.
 Also validate on a fresh machine or disposable VM before migrating bootstrap

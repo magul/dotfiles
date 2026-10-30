@@ -23,6 +23,11 @@ if ! command -v salt-call >/dev/null 2>&1; then
     exit 1
 fi
 
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "python3 is required to read the chezmoi provisioning context." >&2
+    exit 1
+fi
+
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 # A private directory also isolates keys/cache from any installed minion service.
 runtime_dir="$(mktemp -d /tmp/chezmoi-salt.XXXXXX)"
@@ -30,8 +35,12 @@ trap 'rm -rf -- "$runtime_dir"' EXIT
 cat "$repo_dir/provisioning/config/minion" > "$runtime_dir/minion"
 printf '\ncachedir: %s/cache\npki_dir: %s/pki\nextension_modules: %s/extmods\n' \
     "$runtime_dir" "$runtime_dir" "$runtime_dir" >> "$runtime_dir/minion"
+mkdir "$runtime_dir/pillar"
+python3 "$repo_dir/scripts/provision_context.py" > "$runtime_dir/pillar/context.sls"
+printf 'base:\n  "*":\n    - context\n' > "$runtime_dir/pillar/top.sls"
 
 salt-call --local --config-dir "$runtime_dir" \
     --file-root "$repo_dir/provisioning/salt" \
+    --pillar-root "$runtime_dir/pillar" \
     --log-file /dev/null --retcode-passthrough \
     state.apply "test=$test_mode"
