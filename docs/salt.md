@@ -1,9 +1,9 @@
 # Masterless Salt
 
 Chezmoi manages home-directory configuration. Salt will gradually take ownership
-of software installation and its dependencies. The initial Salt stack contains
-only `test.nop`: it installs nothing and changes no managed system resources.
-Existing chezmoi installers still own all software installation.
+of software installation and its dependencies. The state files under
+`provisioning/salt/` define the software managed by Salt. Chezmoi continues to
+run installers that have not yet been migrated.
 
 Salt runs on demand with `salt-call --local`. No Salt master, key exchange,
 background minion, or open ports are needed. There is no automatic Salt hook in
@@ -12,8 +12,9 @@ background minion, or open ports are needed. There is no automatic Salt hook in
 ## Bootstrap on a fresh system
 
 First install chezmoi and initialize this repository using the main README's
-bootstrap instructions. The existing bootstrap still installs software through
-chezmoi. Install Salt separately using the steps below, then run the empty stack.
+bootstrap instructions. Install Salt separately using the steps below, then run
+the stack to install the software it manages. Complete both steps when setting
+up a machine; chezmoi alone does not install software already migrated to Salt.
 These instructions cover Debian/Ubuntu and macOS; the runner requires Bash.
 
 ### Debian / Ubuntu
@@ -63,23 +64,32 @@ salt-call --version
 Ensure the installed `salt-call` is on PATH before continuing. This foundation
 does not yet define Homebrew packages or macOS-specific provisioning states.
 
-### Run the initial stack
+### Run the stack
+
+On Debian/Ubuntu, run both preview and apply as root so they use the same package
+manager context:
 
 ```bash
 cd "$(chezmoi source-path)"
-bash scripts/provision preview
-bash scripts/provision apply
+sudo bash scripts/provision preview
+sudo bash scripts/provision apply
+sudo bash scripts/provision apply  # should report no further changes
 ```
 
-Both runs should report a successful `salt-foundation` state with no changes.
+Preview reports planned changes; apply brings the system into the desired state.
+A second apply should report no further changes.
+
+On macOS, use `bash scripts/provision preview` and `bash scripts/provision apply`
+without `sudo`; only the successful `salt-foundation` no-op state runs there.
+Other operating systems have no package states selected by this stack.
 Omitting the argument defaults to preview. Preview uses Salt's `test=True`;
 apply uses `test=False`. The runner returns Salt's failure status.
 
-Run as your normal user for this empty stack. The runner uses the repository's
-configuration and state tree, and removes its private temporary cache and keys
-after each run. It does not modify `/etc/salt`. Future system package states
-will require an explicit privilege strategy; user tools must retain their
-intended user and home directory.
+The runner uses the repository's configuration and state tree, and removes its
+private temporary cache and keys
+after each run. It does not modify `/etc/salt`. It runs with the invoking user's
+privileges and never invokes sudo itself. Future user-tool states must explicitly
+retain their intended user and home directory when Salt runs as root.
 
 ## Apply changes committed later
 
@@ -91,14 +101,15 @@ cd "$(chezmoi source-path)"
 git pull --ff-only
 chezmoi diff
 chezmoi apply
-bash scripts/provision preview
-bash scripts/provision apply
+sudo bash scripts/provision preview
+sudo bash scripts/provision apply
 ```
 
 Resolve any local changes or divergent history if `git pull --ff-only` fails
 before proceeding. Review the previews before running the corresponding apply
 command. `chezmoi diff` previews file changes; inspect changed `run_*` scripts
 as well, since `chezmoi apply` can execute them.
+The Salt commands above are for Debian/Ubuntu; omit `sudo` on macOS.
 
 If you normally use `chezmoi update`, it already pulls and applies chezmoi
 changes. Follow it with the two `scripts/provision` commands above. Salt changes
@@ -110,7 +121,7 @@ Updating these states does not upgrade the Salt runtime. Upgrade Salt separately
 through apt (within the pinned LTS series) or a newer macOS installer. Review the
 official installation guide before changing the pinned major version.
 
-## Add the first real state later
+## Add more states
 
 Add an SLS file under `provisioning/salt/` and list its name in `top.sls`.
 Express dependencies using Salt requisites such as `require`. Disable the

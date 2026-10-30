@@ -2,6 +2,10 @@
 # Install jq (JSON processor) — required by ~/.claude/statusline.sh
 set -euo pipefail
 
+{{ if eq .chezmoi.os "linux" -}}
+# Debian/Ubuntu package installation is now owned by masterless Salt.
+echo "jq installation on Debian/Ubuntu is managed by Salt. See docs/salt.md."
+{{ else -}}
 if command -v jq &>/dev/null; then
     echo "jq is already installed: $(jq --version)"
     exit 0
@@ -9,9 +13,7 @@ fi
 
 echo "Installing jq..."
 
-{{ if eq .chezmoi.os "linux" -}}
-sudo apt-get update && sudo apt-get install -y jq
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 brew install jq
 {{ else -}}
@@ -20,3 +22,4 @@ exit 1
 {{ end -}}
 
 echo "jq installed: $(jq --version)"
+{{ end -}}

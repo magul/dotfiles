@@ -39,16 +39,18 @@ chezmoi apply
 
 ## Software provisioning with Salt
 
-An opt-in masterless Salt foundation is available alongside chezmoi. It currently
-runs only a no-op state; existing chezmoi scripts still install all software.
+Software installation is gradually moving from chezmoi scripts to masterless Salt.
 See [Salt setup and updates](docs/salt.md) for fresh-system installation and how
 to apply newly committed changes. Salt is invoked explicitly:
 
 ```bash
 cd "$(chezmoi source-path)"
-bash scripts/provision preview
-bash scripts/provision apply
+sudo bash scripts/provision preview
+sudo bash scripts/provision apply
 ```
+
+These commands use root for Debian/Ubuntu package management. On macOS, run
+without `sudo`; the Salt stack currently contains only a no-op there.
 
 ## Daily usage
 
@@ -141,7 +143,7 @@ dot_bashrc
 │       └── aliases.sh          # shared shell aliases
 ├── private_dot_claude/
 │   ├── settings.json           # Claude Code settings (model, statusline, voice)
-│   └── executable_statusline.sh  # Claude Code statusline script (needs jq)
+│   └── executable_statusline.sh  # Claude Code statusline script
 ├── private_dot_codex/
 │   └── private_dotfiles.config.toml # Codex profile
 ├── dot_zprofile.tmpl           # ~/.zprofile (OS-specific)

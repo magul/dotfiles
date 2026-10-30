@@ -1,5 +1,5 @@
 # Used only by scripts/provision; independent of /etc/salt/minion.
 file_client: local
 id: chezmoi-local
-default_include: []
+default_include: ''
 log_level: warning

@@ -1,4 +1,4 @@
-# Keep the initial stack executable without managing any software or services.
+# Keep the stack executable on platforms with no migrated software yet.
 salt-foundation:
   test.nop:
-    - name: Masterless Salt is ready; no software has been migrated yet.
+    - name: Masterless Salt is ready.

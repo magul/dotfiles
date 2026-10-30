@@ -28,8 +28,8 @@ repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 runtime_dir="$(mktemp -d /tmp/chezmoi-salt.XXXXXX)"
 trap 'rm -rf -- "$runtime_dir"' EXIT
 cat "$repo_dir/provisioning/config/minion" > "$runtime_dir/minion"
-printf '\ncachedir: %s/cache\npki_dir: %s/pki\n' \
-    "$runtime_dir" "$runtime_dir" >> "$runtime_dir/minion"
+printf '\ncachedir: %s/cache\npki_dir: %s/pki\nextension_modules: %s/extmods\n' \
+    "$runtime_dir" "$runtime_dir" "$runtime_dir" >> "$runtime_dir/minion"
 
 salt-call --local --config-dir "$runtime_dir" \
     --file-root "$repo_dir/provisioning/salt" \
