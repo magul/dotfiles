@@ -1,5 +1,8 @@
 README.md
 LICENSE
+docs
+scripts
+provisioning
 
 {{- /* Preserve desktop behavior for machines initialized before role existed. */ -}}
 {{- $role := get . "role" | default "desktop" -}}

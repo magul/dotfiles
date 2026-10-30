@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Run the repository's masterless Salt stack from any working directory.
+set -euo pipefail
+
+usage() {
+    echo "Usage: $0 [preview|apply]"
+    echo "Defaults to preview. Requires salt-call on PATH."
+}
+
+if (( $# > 1 )); then
+    usage >&2
+    exit 2
+fi
+case "${1:-preview}" in
+    preview) test_mode=True ;;
+    apply) test_mode=False ;;
+    -h|--help) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+esac
+
+if ! command -v salt-call >/dev/null 2>&1; then
+    echo "salt-call is missing. See docs/salt.md for installation instructions." >&2
+    exit 1
+fi
+
+repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+# A private directory also isolates keys/cache from any installed minion service.
+runtime_dir="$(mktemp -d /tmp/chezmoi-salt.XXXXXX)"
+trap 'rm -rf -- "$runtime_dir"' EXIT
+cat "$repo_dir/provisioning/config/minion" > "$runtime_dir/minion"
+printf '\ncachedir: %s/cache\npki_dir: %s/pki\n' \
+    "$runtime_dir" "$runtime_dir" >> "$runtime_dir/minion"
+
+salt-call --local --config-dir "$runtime_dir" \
+    --file-root "$repo_dir/provisioning/salt" \
+    --log-file /dev/null --retcode-passthrough \
+    state.apply "test=$test_mode"

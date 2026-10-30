@@ -37,6 +37,19 @@ chezmoi diff
 chezmoi apply
 ```
 
+## Software provisioning with Salt
+
+An opt-in masterless Salt foundation is available alongside chezmoi. It currently
+runs only a no-op state; existing chezmoi scripts still install all software.
+See [Salt setup and updates](docs/salt.md) for fresh-system installation and how
+to apply newly committed changes. Salt is invoked explicitly:
+
+```bash
+cd "$(chezmoi source-path)"
+bash scripts/provision preview
+bash scripts/provision apply
+```
+
 ## Daily usage
 
 ```bash
