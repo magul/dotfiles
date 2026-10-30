@@ -2,6 +2,10 @@
 # Install Neovim if not already installed
 set -euo pipefail
 
+{{ if eq .chezmoi.os "linux" -}}
+# Debian/Ubuntu package installation is now owned by masterless Salt.
+echo "Neovim installation on Debian/Ubuntu is managed by Salt. See docs/salt.md."
+{{ else -}}
 if command -v nvim &>/dev/null; then
     echo "Neovim is already installed: $(nvim --version | head -1)"
     exit 0
@@ -11,7 +15,6 @@ echo "Installing Neovim..."
 {{ if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 brew install neovim
-{{ else if eq .chezmoi.os "linux" -}}
-sudo apt-get update && sudo apt-get install -y neovim
 {{ end -}}
 echo "Neovim installed: $(nvim --version | head -1)"
+{{ end -}}
