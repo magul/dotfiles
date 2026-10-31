@@ -150,7 +150,7 @@ dot_bashrc
 ├── dot_zshrc.tmpl              # ~/.zshrc (OS-specific)
 ├── run_once_install-hunk.sh.tmpl             # auto-installs Hunk (terminal diff viewer)
 ├── run_onchange_install-neovim.sh.tmpl       # auto-installs Neovim
-├── run_onchange_install-oh-my-zsh.sh         # auto-installs Oh My Zsh
+├── run_onchange_install-oh-my-zsh.sh.tmpl    # macOS Oh My Zsh installer
 ├── run_onchange_install-vscode-extensions.sh.tmpl  # auto-installs VS Code extensions
 ├── LICENSE
 └── README.md

@@ -2,9 +2,13 @@
 # Install Oh My Zsh if not already installed
 set -euo pipefail
 
+{{ if eq .chezmoi.os "linux" -}}
+echo "Oh My Zsh on Debian/Ubuntu is managed by Salt. See docs/salt.md."
+{{ else -}}
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "Installing Oh My Zsh..."
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
 else
     echo "Oh My Zsh is already installed."
 fi
+{{ end -}}

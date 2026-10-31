@@ -8,6 +8,7 @@ base:
     - helm
     - codex
     - pyenv
+    - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
     - chrome
