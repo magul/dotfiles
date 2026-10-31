@@ -6,6 +6,7 @@ base:
     - jq
     - neovim
     - helm
+    - flux
     - codex
     - pyenv
     - oh-my-zsh
