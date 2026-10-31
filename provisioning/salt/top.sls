@@ -11,5 +11,6 @@ base:
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
     - chrome
+    - handy
     - vm-curator
 {% endif %}
