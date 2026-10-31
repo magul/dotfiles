@@ -2,6 +2,9 @@
 # Install Hunk (review-first terminal diff viewer)
 set -euo pipefail
 
+{{ if eq .chezmoi.os "linux" -}}
+echo "Hunk on Debian/Ubuntu is managed by Salt. See docs/salt.md."
+{{ else -}}
 if command -v hunk &>/dev/null; then
     echo "Hunk is already installed: $(hunk --version 2>/dev/null | head -1)"
     exit 0
@@ -9,15 +12,7 @@ fi
 
 echo "Installing Hunk..."
 
-{{ if eq .chezmoi.os "linux" -}}
-# Official installer picks the right darwin/linux-{x86_64,aarch64} archive, verifies it
-# against the release SHA256SUMS, and installs to ~/.hunk/bin with the bundled agent
-# skills beside it at ~/.hunk/skills (where `hunk skill path` looks). The default install
-# dir is kept so the skills tree stays out of ~/.local/bin; ~/.zshrc puts it on PATH.
-export HUNK_NO_MODIFY_PATH=1
-curl -fsSL https://hunk.dev/install.sh | sh
-export PATH="$HOME/.hunk/bin:$PATH"
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 brew install hunk
 {{ else -}}
@@ -26,3 +21,4 @@ exit 1
 {{ end -}}
 
 echo "Hunk installed: $(hunk --version 2>/dev/null | head -1)"
+{{ end -}}

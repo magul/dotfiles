@@ -8,6 +8,7 @@ base:
     - helm
     - flux
     - k9s
+    - hunk
     - codex
     - pyenv
     - oh-my-zsh
