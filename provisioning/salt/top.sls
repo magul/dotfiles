@@ -12,6 +12,7 @@ base:
     - herdr
     - codex
     - claude-code
+    - opencode
     - pyenv
     - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}

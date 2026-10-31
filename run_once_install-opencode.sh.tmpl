@@ -4,15 +4,7 @@
 set -euo pipefail
 
 {{ if eq .chezmoi.os "linux" -}}
-if command -v opencode &>/dev/null; then
-    echo "opencode is already installed."
-    exit 0
-fi
-
-echo "Installing opencode..."
-curl -fsSL https://opencode.ai/install | bash -s -- --no-modify-path
-
-echo "opencode installation complete."
+echo "OpenCode on Debian/Ubuntu is managed by Salt. See docs/salt.md."
 {{ else if eq .chezmoi.os "darwin" -}}
 if command -v opencode &>/dev/null; then
     echo "opencode is already installed."
