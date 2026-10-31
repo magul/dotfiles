@@ -2,6 +2,9 @@
 # Install Herdr (terminal multiplexer for coding agents)
 set -euo pipefail
 
+{{ if eq .chezmoi.os "linux" -}}
+echo "Herdr on Debian/Ubuntu is managed by Salt. See docs/salt.md."
+{{ else -}}
 if command -v herdr &>/dev/null; then
     echo "Herdr is already installed: $(herdr --version 2>/dev/null | head -1)"
     exit 0
@@ -9,13 +12,7 @@ fi
 
 echo "Installing Herdr..."
 
-{{ if eq .chezmoi.os "linux" -}}
-# Official installer picks the right linux-{x86_64,aarch64} binary from the
-# release manifest; ~/.local/bin is already on PATH via ~/.zprofile.
-export HERDR_INSTALL_DIR="$HOME/.local/bin"
-curl -fsSL https://herdr.dev/install.sh | sh
-export PATH="$HERDR_INSTALL_DIR:$PATH"
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 brew install herdr
 {{ else -}}
@@ -24,3 +21,4 @@ exit 1
 {{ end -}}
 
 echo "Herdr installed: $(herdr --version 2>/dev/null | head -1)"
+{{ end -}}

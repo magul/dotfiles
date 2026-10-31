@@ -9,6 +9,7 @@ base:
     - flux
     - k9s
     - hunk
+    - herdr
     - codex
     - pyenv
     - oh-my-zsh
