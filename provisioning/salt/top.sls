@@ -10,4 +10,5 @@ base:
     - pyenv
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
+    - vm-curator
 {% endif %}
