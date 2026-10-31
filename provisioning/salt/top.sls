@@ -11,6 +11,7 @@ base:
     - hunk
     - herdr
     - codex
+    - claude-code
     - pyenv
     - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
