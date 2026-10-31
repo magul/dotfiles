@@ -2,6 +2,10 @@
 # Install k9s (Kubernetes CLI)
 set -euo pipefail
 
+{{ if eq .chezmoi.os "linux" -}}
+echo "k9s on Debian/Ubuntu is managed by Salt. See docs/salt.md."
+{{ else -}}
+
 if command -v k9s &>/dev/null; then
     echo "k9s is already installed: $(k9s version --short)"
     exit 0
@@ -9,18 +13,7 @@ fi
 
 echo "Installing k9s..."
 
-{{ if eq .chezmoi.os "linux" -}}
-LATEST=$(curl -fsSL https://api.github.com/repos/derailed/k9s/releases/latest | grep '"tag_name"' | sed 's/.*"tag_name": *"\(.*\)".*/\1/')
-ARCH=$(uname -m)
-case "$ARCH" in
-    x86_64) ARCH="amd64" ;;
-    aarch64) ARCH="arm64" ;;
-    *) echo "Unsupported architecture: $ARCH" >&2; exit 1 ;;
-esac
-curl -fsSL "https://github.com/derailed/k9s/releases/download/${LATEST}/k9s_Linux_${ARCH}.tar.gz" | tar -xz -C /tmp k9s
-sudo mv /tmp/k9s /usr/local/bin/k9s
-sudo chmod +x /usr/local/bin/k9s
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 brew install k9s
 {{ else -}}
@@ -29,3 +22,4 @@ exit 1
 {{ end -}}
 
 echo "k9s installed: $(k9s version --short)"
+{{ end -}}

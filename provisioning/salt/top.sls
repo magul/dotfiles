@@ -7,6 +7,7 @@ base:
     - neovim
     - helm
     - flux
+    - k9s
     - codex
     - pyenv
     - oh-my-zsh
