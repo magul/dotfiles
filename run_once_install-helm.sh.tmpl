@@ -2,6 +2,9 @@
 # Install Helm (Kubernetes package manager)
 set -euo pipefail
 
+{{ if eq .chezmoi.os "linux" -}}
+echo "Helm and helm-diff on Debian/Ubuntu are managed by Salt. See docs/salt.md."
+{{ else -}}
 if command -v helm &>/dev/null; then
     echo "Helm is already installed: $(helm version --short)"
     exit 0
@@ -9,9 +12,7 @@ fi
 
 echo "Installing Helm..."
 
-{{ if eq .chezmoi.os "linux" -}}
-curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 brew install helm
 {{ else -}}
@@ -29,3 +30,4 @@ if ! helm plugin list | grep -q '^diff'; then
 else
     echo "helm-diff plugin is already installed."
 fi
+{{ end -}}
