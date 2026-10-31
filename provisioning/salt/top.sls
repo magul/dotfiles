@@ -6,6 +6,7 @@ base:
     - jq
     - neovim
     - helm
+    - codex
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
 {% endif %}

@@ -4,13 +4,8 @@
 set -euo pipefail
 
 {{ if eq .chezmoi.os "linux" -}}
-# Each installer runs in its own process; load Node provisioned by the before script.
-export NVM_DIR="$HOME/.nvm"
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-    source "$NVM_DIR/nvm.sh"
-fi
-{{ end -}}
-
+echo "Codex installation on Debian/Ubuntu is managed by Salt. See docs/salt.md."
+{{ else -}}
 if command -v codex &>/dev/null; then
     echo "Codex is already installed: $(codex --version 2>/dev/null | head -1)"
     exit 0
@@ -18,19 +13,7 @@ fi
 
 echo "Installing Codex..."
 
-{{ if eq .chezmoi.os "linux" -}}
-# npm is the route OpenAI documents for Linux; the package pulls the matching
-# @openai/codex-linux-{x64,arm64} binary, which carries the same sandbox/exec
-# helpers (bwrap, rg) as the release tarball behind a small Node shim.
-# A full apply provisions Node.js first; targeted applies need it installed already.
-if ! command -v npm &>/dev/null; then
-    echo "Error: npm is required. Apply run_once_before_install-nodejs.sh.tmpl first." >&2
-    exit 1
-fi
-# Under nvm, -g installs into the active node version's prefix, so Codex has to
-# be reinstalled after switching or upgrading node.
-npm install -g @openai/codex
-{{ else if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 {{ template "ensure-homebrew" . -}}
 # Codex lives in homebrew-cask, not homebrew-core; the cask symlinks bin/codex
 # into the Homebrew prefix and generates the zsh completions.
@@ -41,3 +24,4 @@ exit 1
 {{ end -}}
 
 echo "Codex installed: $(codex --version 2>/dev/null | head -1)"
+{{ end -}}

@@ -1,4 +1,7 @@
-{{ if or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin") -}}
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+echo "Node.js and nvm on Debian/Ubuntu are managed by Salt. See docs/salt.md."
+{{ else if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 # Install per-user nvm and Node.js before npm-dependent installers.
 set -euo pipefail
