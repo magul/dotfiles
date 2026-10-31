@@ -7,6 +7,7 @@ base:
     - neovim
     - helm
     - codex
+    - pyenv
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
 {% endif %}
