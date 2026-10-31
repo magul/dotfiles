@@ -12,5 +12,6 @@ base:
     - vscode
     - chrome
     - handy
+    - obsidian
     - vm-curator
 {% endif %}
