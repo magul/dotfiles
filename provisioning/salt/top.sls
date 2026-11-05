@@ -14,6 +14,7 @@ base:
     - codex
     - claude-code
     - opencode
+    - configuration.opencode
     - pyenv
     - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
@@ -38,6 +39,7 @@ base:
     - codex
     - claude-code
     - opencode
+    - configuration.opencode
     - pyenv
     - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}

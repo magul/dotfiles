@@ -143,8 +143,6 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 │   │   └── settings.json       # VS Code settings
 │   ├── nvim/
 │   │   └── init.lua            # Neovim configuration
-│   ├── opencode/
-│   │   └── opencode.json       # OpenCode configuration
 │   ├── shell/
 │   │   └── aliases.sh          # shared shell aliases
 │   └── vm-curator/
