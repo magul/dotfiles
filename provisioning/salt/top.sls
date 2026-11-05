@@ -12,6 +12,7 @@ base:
     - configuration.hunk
     - herdr
     - codex
+    - configuration.codex
     - claude-code
     - opencode
     - configuration.opencode
@@ -37,6 +38,7 @@ base:
     - configuration.hunk
     - herdr
     - codex
+    - configuration.codex
     - claude-code
     - opencode
     - configuration.opencode

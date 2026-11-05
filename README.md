@@ -150,8 +150,6 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 ├── private_dot_claude/
 │   ├── settings.json           # Claude Code settings (model, statusline, voice)
 │   └── executable_statusline.sh  # Claude Code statusline script
-├── private_dot_codex/
-│   └── private_dotfiles.config.toml # Codex profile
 ├── provisioning/
 │   ├── config/minion          # repository-local Salt configuration
 │   └── salt/                  # software states and top.sls selection
