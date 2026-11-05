@@ -40,4 +40,5 @@ base:
     - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
+    - chrome
 {% endif %}

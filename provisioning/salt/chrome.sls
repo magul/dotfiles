@@ -1,5 +1,16 @@
 {% set context = pillar.get('dotfiles', {}) %}
-{% if grains.get('os') in ['Debian', 'Ubuntu'] and context.get('role') == 'desktop' %}
+{% if grains.get('os') == 'MacOS' and context.get('role') == 'desktop' %}
+include:
+  - homebrew
+
+chrome-package:
+  pkg.installed:
+    - name: google-chrome
+    - options:
+      - --cask
+    - require:
+      - cmd: homebrew-install
+{% elif grains.get('os') in ['Debian', 'Ubuntu'] and context.get('role') == 'desktop' %}
 {% set arch = grains.get('osarch') %}
 {% if arch in ['amd64', 'arm64'] %}
 

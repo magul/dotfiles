@@ -12,7 +12,6 @@ provisioning
 {{ if eq $role "server" -}}
 .config/Code
 .config/vm-curator
-install-chrome.sh
 install-obsidian.sh
 install-handy.sh
 install-qemu.sh
