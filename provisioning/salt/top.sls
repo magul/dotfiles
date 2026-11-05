@@ -32,3 +32,4 @@ base:
     - k9s
     - hunk
     - herdr
+    - codex

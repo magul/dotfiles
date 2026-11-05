@@ -1,4 +1,15 @@
-{% if grains.get('os') in ['Debian', 'Ubuntu'] %}
+{% if grains.get('os') == 'MacOS' %}
+include:
+  - homebrew
+
+codex-install:
+  pkg.installed:
+    - name: codex
+    - options:
+      - --cask
+    - require:
+      - cmd: homebrew-install
+{% elif grains.get('os') in ['Debian', 'Ubuntu'] %}
 {% set context = pillar['dotfiles'] %}
 {% set home = context['home'] %}
 
