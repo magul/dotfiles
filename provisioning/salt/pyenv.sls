@@ -1,4 +1,23 @@
-{% if grains.get('os') in ['Debian', 'Ubuntu'] %}
+{% if grains.get('os') == 'MacOS' %}
+include:
+  - homebrew
+
+pyenv-install:
+  pkg.installed:
+    - name: pyenv
+    - options:
+      - --formula
+    - require:
+      - cmd: homebrew-install
+
+pyenv-virtualenv:
+  pkg.installed:
+    - name: pyenv-virtualenv
+    - options:
+      - --formula
+    - require:
+      - pkg: pyenv-install
+{% elif grains.get('os') in ['Debian', 'Ubuntu'] %}
 {% set context = pillar['dotfiles'] %}
 {% set home = context['home'] %}
 

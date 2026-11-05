@@ -35,3 +35,4 @@ base:
     - codex
     - claude-code
     - opencode
+    - pyenv
