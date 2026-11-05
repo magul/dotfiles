@@ -27,3 +27,4 @@ base:
     - homebrew
     - jq
     - neovim
+    - helm

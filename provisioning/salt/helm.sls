@@ -1,7 +1,27 @@
-{% if grains.get('os') in ['Debian', 'Ubuntu'] %}
+{% if grains.get('os') in ['Debian', 'Ubuntu', 'MacOS'] %}
 {% set context = pillar['dotfiles'] %}
 {% set home = context['home'] %}
 
+{% if grains['os'] == 'MacOS' %}
+include:
+  - homebrew
+
+helm-prerequisites:
+  pkg.installed:
+    - name: git
+    - options:
+      - --formula
+    - require:
+      - cmd: homebrew-install
+
+helm-install:
+  pkg.installed:
+    - name: helm
+    - options:
+      - --formula
+    - require:
+      - cmd: homebrew-install
+{% else %}
 helm-prerequisites:
   pkg.installed:
     - pkgs:
@@ -26,22 +46,32 @@ helm-install:
       - VERIFY_CHECKSUM: 'true'
     - require:
       - pkg: helm-prerequisites
+{% endif %}
 
 helm-diff:
   cmd.run:
     # Preserve the existing Git-based plugin installation method for Helm 4.
     - name: helm plugin install https://github.com/databus23/helm-diff --verify=false
     - unless: helm diff version >/dev/null 2>&1
+{% if grains['os'] != 'MacOS' %}
     - runas: {{ context['user'] | yaml_dquote }}
+{% endif %}
     - cwd: {{ home | yaml_dquote }}
     - shell: /bin/bash
-    - prepend_path: /usr/local/bin:/usr/bin:/bin
+    - prepend_path: {{ '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin' if grains['os'] == 'MacOS' else '/usr/local/bin:/usr/bin:/bin' }}
     - env:
       - HOME: {{ home | yaml_dquote }}
+{% if grains['os'] != 'MacOS' %}
       - HELM_CONFIG_HOME: {{ (home ~ '/.config/helm') | yaml_dquote }}
       - HELM_CACHE_HOME: {{ (home ~ '/.cache/helm') | yaml_dquote }}
       - HELM_DATA_HOME: {{ (home ~ '/.local/share/helm') | yaml_dquote }}
       - HELM_PLUGINS: {{ (home ~ '/.local/share/helm/plugins') | yaml_dquote }}
+{% endif %}
     - require:
+{% if grains['os'] == 'MacOS' %}
+      - pkg: helm-install
+      - pkg: helm-prerequisites
+{% else %}
       - cmd: helm-install
+{% endif %}
 {% endif %}
