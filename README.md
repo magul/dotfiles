@@ -40,7 +40,8 @@ Complete the Salt bootstrap above, then preview and apply configuration.
 
 ## Software provisioning with Salt
 
-Salt manages software installation and dependencies; chezmoi manages configuration.
+Salt manages software installation, dependencies, and migrated configuration.
+Chezmoi manages the remaining configuration during the gradual handoff.
 See [Salt setup and updates](docs/salt.md) for fresh-system installation and how
 to apply newly committed changes. Salt is invoked explicitly:
 
@@ -140,8 +141,6 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 │   │   ├── extensions.txt      # VS Code extensions list
 │   │   ├── keybindings.json    # VS Code keybindings
 │   │   └── settings.json       # VS Code settings
-│   ├── hunk/
-│   │   └── config.toml         # Hunk diff viewer configuration
 │   ├── nvim/
 │   │   └── init.lua            # Neovim configuration
 │   ├── opencode/

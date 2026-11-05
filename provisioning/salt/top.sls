@@ -9,6 +9,7 @@ base:
     - flux
     - k9s
     - hunk
+    - configuration.hunk
     - herdr
     - codex
     - claude-code
@@ -32,6 +33,7 @@ base:
     - flux
     - k9s
     - hunk
+    - configuration.hunk
     - herdr
     - codex
     - claude-code

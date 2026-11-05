@@ -1,14 +1,14 @@
 # Masterless Salt
 
-Chezmoi manages home-directory configuration. Salt manages software installation
-and dependencies on Debian/Ubuntu and macOS. State files under
+Home-directory configuration is moving gradually from chezmoi to Salt. Salt
+manages software installation and dependencies on Debian/Ubuntu and macOS. State files under
 `provisioning/salt/` define the desired software; `top.sls` selects states by
 operating system and machine role. There are no remaining chezmoi software
 installer scripts.
 
 The [configuration migration foundation](configuration.md) provides shared paths,
 ownership, and permission defaults. Configuration ownership moves one application
-at a time; existing configuration is still managed by chezmoi.
+at a time; configuration sources still in chezmoi remain managed by chezmoi.
 
 Salt runs on demand with `salt-call --local`. No Salt master, key exchange,
 background minion, or open ports are needed. There is no automatic Salt hook in

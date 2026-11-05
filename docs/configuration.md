@@ -1,7 +1,8 @@
 # Configuration migration
 
-The foundation is ready; existing configuration files are still managed by
-chezmoi. Migrate one application at a time, starting with a small static file.
+Configuration ownership is moving from chezmoi to Salt one application at a
+time. States under `provisioning/salt/configuration/` define the migrated files;
+configuration still present in chezmoi's source tree remains managed by chezmoi.
 
 ## Shared context
 
@@ -65,6 +66,11 @@ application's installation state with the correct platform-specific state type.
 Use explicit files rather than recursively copying, cleaning, or changing modes
 across existing application directories. Leave credentials, runtime data, caches,
 and local overrides outside managed file sets.
+
+Before replacing an existing file, preserve any local edits you want to keep in
+the source or a separate backup outside the runner's temporary directory. Salt's
+`backup: minion` stores backups in its cache, which this runner removes after
+each run; it does not provide a persistent backup here.
 
 ## Handoff from chezmoi
 
