@@ -1,8 +1,8 @@
 # Configuration migration
 
-Configuration ownership is moving from chezmoi to Salt one application at a
-time. States under `provisioning/salt/configuration/` define the migrated files;
-configuration still present in chezmoi's source tree remains managed by chezmoi.
+All tracked configuration is now managed by Salt. States under
+`provisioning/salt/configuration/` define the managed files. Chezmoi still
+initializes the repository and supplies the machine role.
 
 ## Shared context
 
@@ -83,5 +83,6 @@ each run; it does not provide a persistent backup here.
 5. Preview, apply, then confirm a second apply reports no changes. Validate on
    the target platform before treating the migration as complete.
 
-Shell startup files are migrated last. Keep chezmoi responsible for machine role
-selection until a separate transition replaces that bootstrap dependency.
+Shell startup files have been migrated. Local secrets and `.zshrc.local` remain
+unmanaged. Keep chezmoi responsible for machine role selection until a separate
+transition replaces that bootstrap dependency.

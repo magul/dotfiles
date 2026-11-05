@@ -1,5 +1,5 @@
 # ===========================================================================
-# .zshrc — managed by chezmoi
+# .zshrc — managed by Salt
 # ===========================================================================
 
 # ---------------------------------------------------------------------------
@@ -71,17 +71,17 @@ fi
 # ---------------------------------------------------------------------------
 # OS-specific configuration
 # ---------------------------------------------------------------------------
-{{- if eq .chezmoi.os "darwin" }}
+{%- if grains['os'] == 'MacOS' %}
 # macOS-specific settings
-{{- else if eq .chezmoi.os "linux" }}
+{%- elif grains['os'] in ['Debian', 'Ubuntu'] %}
 # Linux-specific settings
-{{- end }}
+{%- endif %}
 # ---------------------------------------------------------------------------
-# Grafana / Terraform secrets (not tracked by chezmoi)
+# Grafana / Terraform secrets (unmanaged)
 # ---------------------------------------------------------------------------
 [ -f "$HOME/.config/secrets/grafana.env" ] && source "$HOME/.config/secrets/grafana.env"
 
 # ---------------------------------------------------------------------------
-# Local overrides (not tracked by chezmoi)
+# Local overrides (unmanaged)
 # ---------------------------------------------------------------------------
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

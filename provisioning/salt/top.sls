@@ -5,6 +5,7 @@ base:
     - match: compound
     - configuration.shell-aliases
     - configuration.zprofile
+    - configuration.zshrc
     - jq
     - neovim
     - configuration.neovim
@@ -35,6 +36,7 @@ base:
     - match: grain
     - configuration.shell-aliases
     - configuration.zprofile
+    - configuration.zshrc
     - homebrew
     - nodejs
     - jq

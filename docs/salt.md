@@ -1,14 +1,13 @@
 # Masterless Salt
 
-Home-directory configuration is moving gradually from chezmoi to Salt. Salt
-manages software installation and dependencies on Debian/Ubuntu and macOS. State files under
-`provisioning/salt/` define the desired software; `top.sls` selects states by
-operating system and machine role. There are no remaining chezmoi software
-installer scripts.
+Salt manages home-directory configuration, software installation, and dependencies
+on Debian/Ubuntu and macOS. State files under `provisioning/salt/` define the
+desired system; `top.sls` selects states by operating system and machine role.
+Chezmoi still initializes the repository and supplies the machine role.
 
-The [configuration migration foundation](configuration.md) provides shared paths,
-ownership, and permission defaults. Configuration ownership moves one application
-at a time; configuration sources still in chezmoi remain managed by chezmoi.
+The [configuration guide](configuration.md) describes shared paths, ownership,
+and permission defaults. All tracked configuration sources now live in Salt's
+file tree.
 
 Salt runs on demand with `salt-call --local`. No Salt master, key exchange,
 background minion, or open ports are needed. There is no automatic Salt hook in
@@ -18,9 +17,8 @@ background minion, or open ports are needed. There is no automatic Salt hook in
 
 First install chezmoi and initialize this repository using the main README's
 bootstrap instructions. Install Salt separately using the steps below, preview
-and apply the software states, then run `chezmoi diff` and `chezmoi apply` to
-install configuration. Complete both workflows when setting up a machine;
-chezmoi alone does not install the configured software.
+and apply the Salt states for software and configuration. Chezmoi alone does
+not deploy the managed files or install software.
 These instructions cover Debian/Ubuntu and macOS; the runner requires Bash,
 Python 3, and chezmoi. On Debian/Ubuntu, install Python with
 `sudo apt-get install -y python3` if needed. On macOS, the runner looks for
@@ -86,8 +84,6 @@ bash scripts/provision preview
 sudo -v
 bash scripts/provision apply
 bash scripts/provision apply  # should report no further changes
-chezmoi diff
-chezmoi apply                # home-directory configuration
 ```
 
 The Homebrew installer runs non-interactively as your user and uses sudo only
@@ -135,31 +131,27 @@ Salt as local pillar data. A missing role retains chezmoi's legacy desktop
 default; an invalid role or unreadable configuration stops provisioning.
 Desktop-only states are skipped on servers. Changing the role to server does
 not uninstall existing desktop software. User commands run as the original
-user with their home and platform-appropriate data directories. Chezmoi manages
+user with their home and platform-appropriate data directories. Salt also manages
 application settings and declarative lists.
 
 ## Apply changes committed later
 
-On each machine, pull the repository, preview and apply dotfiles, then preview
-and apply Salt states:
+On each machine, pull the repository, then preview and apply Salt states:
 
 ```bash
 cd "$(chezmoi source-path)"
 git pull --ff-only
-chezmoi diff
-chezmoi apply
 sudo bash scripts/provision preview
 sudo bash scripts/provision apply
 ```
 
 Resolve any local changes or divergent history if `git pull --ff-only` fails
 before proceeding. Review the previews before running the corresponding apply
-command. `chezmoi diff` previews configuration changes; Salt preview reports
-planned provisioning changes.
+command. Salt preview reports planned software and configuration changes.
 The Salt commands above are for Debian/Ubuntu; omit `sudo` on macOS.
 
-If you normally use `chezmoi update`, it already pulls and applies chezmoi
-changes. Follow it with the two `scripts/provision` commands above. Salt changes
+If you normally use `chezmoi update`, follow it with the two
+`scripts/provision` commands above. Salt changes
 are applied only when you run the runner; pulling commits alone does not apply
 them. Re-running Salt evaluates the current desired state each time.
 
@@ -173,8 +165,8 @@ Add an SLS file under `provisioning/salt/` and list its name in `top.sls`.
 Express dependencies using Salt requisites such as `require`, and keep each
 state scoped to the supported operating systems and machine roles. Read the
 role and target account from the `dotfiles` pillar; chezmoi remains the source
-of role selection. Keep software installation in Salt and configuration files
-in chezmoi.
+of role selection. Keep software installation states separate from configuration
+states under `provisioning/salt/configuration/`.
 
 Validate with a preview, an apply, and a second apply that reports no changes.
 Also validate on a fresh machine or disposable VM when changing bootstrap

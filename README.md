@@ -1,7 +1,8 @@
 # dotfiles
 
-Dotfiles managed by [chezmoi](https://www.chezmoi.io/), with software provisioning
-through masterless Salt on Debian/Ubuntu and macOS.
+Dotfiles and software managed by masterless Salt on Debian/Ubuntu and macOS.
+[Chezmoi](https://www.chezmoi.io/) still initializes the repository and supplies
+the machine role.
 
 ## Bootstrap (new machine)
 
@@ -13,14 +14,10 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init magul
 
 On first run, chezmoi prompts for your name, email, and machine role (`desktop`
 or `server`). Follow the [Salt bootstrap instructions](docs/salt.md) to install
-Salt and provision software. On macOS, Salt also bootstraps Homebrew.
+Salt and provision software and configuration. On macOS, Salt also bootstraps Homebrew.
 
-Then preview and apply your configuration:
-
-```bash
-chezmoi diff
-chezmoi apply
-```
+Preview and apply software and configuration with the Salt runner as described
+below. `chezmoi apply` no longer deploys configuration files.
 
 ## Manual setup
 
@@ -40,8 +37,8 @@ Complete the Salt bootstrap above, then preview and apply configuration.
 
 ## Software provisioning with Salt
 
-Salt manages software installation, dependencies, and migrated configuration.
-Chezmoi manages the remaining configuration during the gradual handoff.
+Salt manages software installation, dependencies, and all tracked configuration.
+Chezmoi remains a bootstrap and machine-role dependency.
 See [Salt setup and updates](docs/salt.md) for fresh-system installation and how
 to apply newly committed changes. Salt is invoked explicitly:
 
@@ -57,16 +54,10 @@ Salt is invoked separately from `chezmoi apply` and `chezmoi update`.
 
 ## Daily usage
 
-```bash
-chezmoi add ~/.gitconfig          # start managing a file
-chezmoi add --template ~/.zshrc   # manage as template (for OS-specific content)
-chezmoi edit ~/.gitconfig          # edit the source copy
-chezmoi diff                       # preview pending changes
-chezmoi apply                      # apply changes to home directory
-chezmoi update                     # pull remote changes and apply
-```
+Edit configuration sources under `provisioning/salt/files/` and their states under
+`provisioning/salt/configuration/`. Preview and apply with the Salt runner.
 
-After pulling provisioning changes, run Salt preview and apply as described in
+After pulling changes, run Salt preview and apply as described in
 [Salt setup and updates](docs/salt.md#apply-changes-committed-later).
 
 ## Machine role
@@ -86,39 +77,23 @@ On an existing machine, run `chezmoi edit-config` and add `role` to the existing
     role = "server" # or "desktop"
 ```
 
-Then preview and apply both chezmoi and Salt changes. Machines without a role
+Then preview and apply Salt changes. Machines without a role
 retain desktop behavior. Switching to server skips desktop configuration and
 software states; it does not remove existing files or uninstall applications.
 Switching back to desktop manages those resources again on the next apply.
 
 ## How it works
 
-This repo **is** the chezmoi source directory. Managed configuration maps to your
-home directory:
-
-| Source naming | Target | Notes |
-|---------------|--------|-------|
-| `dot_zshrc.tmpl` | `~/.zshrc` | `.tmpl` suffix = template |
-
-`docs/`, `scripts/`, and `provisioning/` are excluded from chezmoi's home-directory
-targets. The provisioning runner reads its states directly from this repository.
-
-Templates use `{{ .chezmoi.os }}` (`linux` or `darwin`) to vary content per OS.
+Configuration sources live under `provisioning/salt/files/`; states under
+`provisioning/salt/configuration/` select destinations, permissions, and dependencies.
+The provisioning runner reads these files directly from this repository.
+Chezmoi has no remaining home-directory targets.
 
 ## Adding OS-specific config
 
-Use chezmoi's template syntax inside `.tmpl` files:
-
-```
-{{ if eq .chezmoi.os "darwin" -}}
-# macOS-specific config here
-{{ else if eq .chezmoi.os "linux" -}}
-# Linux-specific config here
-{{ end -}}
-```
-
-For Salt-managed configuration, select operating systems and machine roles in
-the state and `top.sls`; see the [configuration migration guide](docs/configuration.md).
+Use Salt Jinja templates for platform differences and select operating systems
+and machine roles in the state and `top.sls`; see the
+[configuration migration guide](docs/configuration.md).
 
 ## Repo structure
 
@@ -135,7 +110,6 @@ the state and `top.sls`; see the [configuration migration guide](docs/configurat
 ├── scripts/
 │   ├── provision              # preview/apply runner
 │   └── provision_context.py   # chezmoi role and user context for Salt
-├── dot_zshrc.tmpl              # ~/.zshrc (OS-specific)
 ├── LICENSE
 └── README.md
 ```
