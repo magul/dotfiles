@@ -4,11 +4,20 @@ Cross-platform dotfiles managed by [chezmoi](https://www.chezmoi.io/).
 
 ## Bootstrap (new machine)
 
-One-liner — installs chezmoi and applies dotfiles:
+On Debian/Ubuntu, install chezmoi and apply dotfiles:
 
 ```bash
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply magul
 ```
+
+On macOS, initialize without applying first:
+
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init magul
+```
+
+Follow the [Salt bootstrap instructions](docs/salt.md) to install Salt and
+provision Homebrew, then run `chezmoi apply` for the remaining installers.
 
 On Windows (PowerShell):
 
@@ -17,9 +26,8 @@ irm get.chezmoi.io/ps1 | iex; chezmoi init --apply magul
 ```
 
 On first run chezmoi will prompt for your name, email, and machine role
-(`desktop` or `server`). On macOS, Homebrew is
-installed automatically (before the other install scripts run) if it isn't
-already present.
+(`desktop` or `server`). On macOS, Salt installs Homebrew before the remaining
+chezmoi application installers are applied.
 
 ## Manual setup
 
@@ -50,7 +58,7 @@ sudo bash scripts/provision apply
 ```
 
 These commands use root for Debian/Ubuntu package management. On macOS, run
-without `sudo`; the Salt stack currently contains only a no-op there.
+without `sudo` so Homebrew runs under your own account.
 
 ## Daily usage
 

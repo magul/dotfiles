@@ -18,13 +18,34 @@ case "${1:-preview}" in
     *) usage >&2; exit 2 ;;
 esac
 
+macos=false
+python_cmd=python3
+if [[ "$(uname -s)" == Darwin ]]; then
+    macos=true
+    if (( EUID == 0 )); then
+        echo "Run macOS provisioning as your normal user, without sudo." >&2
+        exit 1
+    fi
+    export PATH="/opt/homebrew/bin:/usr/local/bin:/opt/salt/bin:/opt/saltstack/salt/bin:/opt/saltstack/salt:$PATH"
+    # Salt's standalone package supplies Python before Homebrew is available.
+    for candidate in /opt/salt/bin/python3 /opt/saltstack/salt/bin/python3; do
+        if [ -x "$candidate" ]; then
+            python_cmd="$candidate"
+            break
+        fi
+    done
+    if command -v brew >/dev/null 2>&1; then
+        export HOMEBREW_PREFIX="$(brew --prefix)"
+    fi
+fi
+
 if ! command -v salt-call >/dev/null 2>&1; then
     echo "salt-call is missing. See docs/salt.md for installation instructions." >&2
     exit 1
 fi
 
-if ! command -v python3 >/dev/null 2>&1; then
-    echo "python3 is required to read the chezmoi provisioning context." >&2
+if ! command -v "$python_cmd" >/dev/null 2>&1; then
+    echo "Python 3 is required; install Salt's standalone package or Python 3. See docs/salt.md." >&2
     exit 1
 fi
 
@@ -33,10 +54,17 @@ repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 runtime_dir="$(mktemp -d /tmp/chezmoi-salt.XXXXXX)"
 trap 'rm -rf -- "$runtime_dir"' EXIT
 cat "$repo_dir/provisioning/config/minion" > "$runtime_dir/minion"
+if $macos; then
+    # Homebrew must run as its owning user, including during preview.
+    printf '\nuser: %s\n' "$(id -un)" >> "$runtime_dir/minion"
+    if command -v brew >/dev/null 2>&1; then
+        printf 'providers:\n  pkg: mac_brew_pkg\n' >> "$runtime_dir/minion"
+    fi
+fi
 printf '\ncachedir: %s/cache\npki_dir: %s/pki\nextension_modules: %s/extmods\n' \
     "$runtime_dir" "$runtime_dir" "$runtime_dir" >> "$runtime_dir/minion"
 mkdir "$runtime_dir/pillar"
-python3 "$repo_dir/scripts/provision_context.py" > "$runtime_dir/pillar/context.sls"
+"$python_cmd" "$repo_dir/scripts/provision_context.py" > "$runtime_dir/pillar/context.sls"
 printf 'base:\n  "*":\n    - context\n' > "$runtime_dir/pillar/top.sls"
 
 salt-call --local --config-dir "$runtime_dir" \

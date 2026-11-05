@@ -12,12 +12,16 @@ background minion, or open ports are needed. There is no automatic Salt hook in
 ## Bootstrap on a fresh system
 
 First install chezmoi and initialize this repository using the main README's
-bootstrap instructions. Install Salt separately using the steps below, then run
+bootstrap instructions. On a fresh Mac, use `chezmoi init` without `--apply` and
+defer `chezmoi apply` until Salt has installed Homebrew. Install Salt separately
+using the steps below, then run
 the stack to install the software it manages. Complete both steps when setting
 up a machine; chezmoi alone does not install software already migrated to Salt.
 These instructions cover Debian/Ubuntu and macOS; the runner requires Bash,
 Python 3, and chezmoi. On Debian/Ubuntu, install Python with
-`sudo apt-get install -y python3` if needed; on macOS, use `brew install python`.
+`sudo apt-get install -y python3` if needed. On macOS, the runner looks for
+Python in Salt's standalone installation before falling back to `python3` on
+PATH; Homebrew is not required to start the runner.
 
 ### Debian / Ubuntu
 
@@ -63,8 +67,30 @@ sudo launchctl stop com.saltstack.salt.minion
 salt-call --version
 ```
 
-Ensure the installed `salt-call` is on PATH before continuing. This foundation
-does not yet define Homebrew packages or macOS-specific provisioning states.
+Salt now bootstraps Homebrew; other macOS application installations remain in
+chezmoi during this first migration step. Install Salt from the standalone `.pkg`
+above, independently of Homebrew. The runner detects the usual Salt and Homebrew
+paths on Intel and Apple Silicon Macs and runs as your current user.
+
+The Homebrew installer may need Apple's Command Line Tools. If missing, run
+`xcode-select --install` and finish installation before applying Salt. On a fresh
+Mac, prepare administrator credentials with `sudo -v`, then run Salt without sudo:
+
+```bash
+cd "$(chezmoi source-path)"
+bash scripts/provision preview
+sudo -v
+bash scripts/provision apply
+bash scripts/provision apply  # should report no further changes
+chezmoi apply                # remaining macOS application installers
+```
+
+The Homebrew installer runs non-interactively as your user and uses sudo only
+where required internally. If credentials expire, run `sudo -v` and retry. The
+runner rejects root execution on macOS. Already-installed Homebrew is skipped.
+See the [Homebrew installation guide](https://docs.brew.sh/Installation.html).
+
+macOS state rendering is checked on Linux; installation on a Mac remains untested.
 
 ### Run the stack
 
@@ -82,7 +108,8 @@ Preview reports planned changes; apply brings the system into the desired state.
 A second apply should report no further changes.
 
 On macOS, use `bash scripts/provision preview` and `bash scripts/provision apply`
-without `sudo`; only the successful `salt-foundation` no-op state runs there.
+without `sudo`; Salt applies the macOS states migrated so far. Other software
+continues to use the existing chezmoi installers during the gradual migration.
 Other operating systems have no package states selected by this stack.
 Omitting the argument defaults to preview. Preview uses Salt's `test=True`;
 apply uses `test=False`. The runner returns Salt's failure status.

@@ -22,3 +22,6 @@ base:
     - obsidian
     - vm-curator
 {% endif %}
+  'os:MacOS':
+    - match: grain
+    - homebrew
