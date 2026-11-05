@@ -5,6 +5,7 @@ base:
     - match: compound
     - jq
     - neovim
+    - configuration.neovim
     - helm
     - flux
     - k9s
@@ -32,6 +33,7 @@ base:
     - nodejs
     - jq
     - neovim
+    - configuration.neovim
     - helm
     - flux
     - k9s

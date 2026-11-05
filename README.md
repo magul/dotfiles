@@ -97,7 +97,7 @@ home directory:
 
 | Source naming | Target | Notes |
 |---------------|--------|-------|
-| `dot_config/nvim/init.lua` | `~/.config/nvim/init.lua` | `dot_` prefix becomes `.` |
+| `dot_config/shell/aliases.sh` | `~/.config/shell/aliases.sh` | `dot_` prefix becomes `.` |
 | `dot_zshrc.tmpl` | `~/.zshrc` | `.tmpl` suffix = template |
 
 `docs/`, `scripts/`, and `provisioning/` are excluded from chezmoi's home-directory
@@ -139,8 +139,6 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 │   │   ├── extensions.txt      # VS Code extensions list
 │   │   ├── keybindings.json    # VS Code keybindings
 │   │   └── settings.json       # VS Code settings
-│   ├── nvim/
-│   │   └── init.lua            # Neovim configuration
 │   ├── shell/
 │   │   └── aliases.sh          # shared shell aliases
 │   └── vm-curator/
