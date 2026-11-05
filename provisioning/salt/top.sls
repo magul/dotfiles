@@ -14,6 +14,7 @@ base:
     - codex
     - configuration.codex
     - claude-code
+    - configuration.claude-code
     - opencode
     - configuration.opencode
     - pyenv
@@ -40,6 +41,7 @@ base:
     - codex
     - configuration.codex
     - claude-code
+    - configuration.claude-code
     - opencode
     - configuration.opencode
     - pyenv

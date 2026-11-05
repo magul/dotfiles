@@ -99,8 +99,6 @@ home directory:
 |---------------|--------|-------|
 | `dot_config/nvim/init.lua` | `~/.config/nvim/init.lua` | `dot_` prefix becomes `.` |
 | `dot_zshrc.tmpl` | `~/.zshrc` | `.tmpl` suffix = template |
-| `private_dot_claude/settings.json` | `~/.claude/settings.json` | `private_` restricts permissions |
-| `private_dot_claude/executable_statusline.sh` | `~/.claude/statusline.sh` | `executable_` = +x permission |
 
 `docs/`, `scripts/`, and `provisioning/` are excluded from chezmoi's home-directory
 targets. The provisioning runner reads its states directly from this repository.
@@ -147,9 +145,6 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 │   │   └── aliases.sh          # shared shell aliases
 │   └── vm-curator/
 │       └── config.toml.tmpl    # VM manager configuration
-├── private_dot_claude/
-│   ├── settings.json           # Claude Code settings (model, statusline, voice)
-│   └── executable_statusline.sh  # Claude Code statusline script
 ├── provisioning/
 │   ├── config/minion          # repository-local Salt configuration
 │   └── salt/                  # software states and top.sls selection
