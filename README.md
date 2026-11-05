@@ -98,7 +98,6 @@ home directory:
 
 | Source naming | Target | Notes |
 |---------------|--------|-------|
-| `dot_zprofile.tmpl` | `~/.zprofile` | `dot_` prefix becomes `.` |
 | `dot_zshrc.tmpl` | `~/.zshrc` | `.tmpl` suffix = template |
 
 `docs/`, `scripts/`, and `provisioning/` are excluded from chezmoi's home-directory
@@ -136,7 +135,6 @@ the state and `top.sls`; see the [configuration migration guide](docs/configurat
 ├── scripts/
 │   ├── provision              # preview/apply runner
 │   └── provision_context.py   # chezmoi role and user context for Salt
-├── dot_zprofile.tmpl           # ~/.zprofile (OS-specific)
 ├── dot_zshrc.tmpl              # ~/.zshrc (OS-specific)
 ├── LICENSE
 └── README.md

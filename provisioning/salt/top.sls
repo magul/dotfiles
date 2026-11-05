@@ -4,6 +4,7 @@ base:
   'G@os:Debian or G@os:Ubuntu':
     - match: compound
     - configuration.shell-aliases
+    - configuration.zprofile
     - jq
     - neovim
     - configuration.neovim
@@ -33,6 +34,7 @@ base:
   'os:MacOS':
     - match: grain
     - configuration.shell-aliases
+    - configuration.zprofile
     - homebrew
     - nodejs
     - jq
