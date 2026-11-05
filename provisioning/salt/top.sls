@@ -36,3 +36,4 @@ base:
     - claude-code
     - opencode
     - pyenv
+    - oh-my-zsh
