@@ -27,6 +27,7 @@ base:
     - handy
     - obsidian
     - vm-curator
+    - configuration.vm-curator
 {% endif %}
   'os:MacOS':
     - match: grain

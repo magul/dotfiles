@@ -74,8 +74,9 @@ After pulling provisioning changes, run Salt preview and apply as described in
 The OS is detected automatically; `role` selects desktop or server behavior
 independently of macOS/Linux. Desktop machines receive the desktop states and
 configuration in addition to the shared CLI tools. Servers receive only the
-shared states and configuration. The state selection is defined in
-`provisioning/salt/top.sls`; configuration exclusions are in `.chezmoiignore`.
+shared states and configuration. Software and migrated configuration selection
+is defined in `provisioning/salt/top.sls`. `.chezmoiignore` excludes repository
+support files from home-directory targets.
 
 On an existing machine, run `chezmoi edit-config` and add `role` to the existing
 `[data]` section (preserve your other entries):
@@ -117,13 +118,8 @@ Use chezmoi's template syntax inside `.tmpl` files:
 {{ end -}}
 ```
 
-To exclude configuration by machine role, add target paths to `.chezmoiignore`:
-
-```
-{{ if eq (get . "role" | default "desktop") "server" }}
-.config/vm-curator
-{{ end }}
-```
+For Salt-managed configuration, select operating systems and machine roles in
+the state and `top.sls`; see the [configuration migration guide](docs/configuration.md).
 
 ## Repo structure
 
@@ -135,10 +131,8 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 ├── docs/
 │   └── salt.md                # Salt bootstrap, apply, and update workflow
 ├── dot_config/
-│   ├── shell/
-│   │   └── aliases.sh          # shared shell aliases
-│   └── vm-curator/
-│       └── config.toml.tmpl    # VM manager configuration
+│   └── shell/
+│       └── aliases.sh          # shared shell aliases
 ├── provisioning/
 │   ├── config/minion          # repository-local Salt configuration
 │   └── salt/                  # software states and top.sls selection

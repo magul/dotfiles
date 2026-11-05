@@ -1,6 +1,7 @@
-vm_library_path = "{{ .chezmoi.homeDir }}/Documents/VMs"
-metadata_path = "{{ .chezmoi.homeDir }}/.config/vm-curator/metadata"
-ascii_art_path = "{{ .chezmoi.homeDir }}/.config/vm-curator/ascii"
+{% from "configuration/map.jinja" import configuration with context -%}
+vm_library_path = {{ (configuration.home ~ "/Documents/VMs") | tojson }}
+metadata_path = {{ (configuration.config_home ~ "/vm-curator/metadata") | tojson }}
+ascii_art_path = {{ (configuration.config_home ~ "/vm-curator/ascii") | tojson }}
 snapshot_prefix = "snapshot"
 default_memory_mb = 4096
 default_cpu_cores = 2
