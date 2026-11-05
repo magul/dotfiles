@@ -44,7 +44,7 @@ def build_context(repo):
 
     extensions = []
     if role == "desktop":
-        for line in (repo / "dot_config/Code/User/extensions.txt").read_text().splitlines():
+        for line in (repo / "provisioning/salt/files/vscode/extensions.txt").read_text().splitlines():
             extension = line.strip()
             if not extension or extension.startswith("#"):
                 continue

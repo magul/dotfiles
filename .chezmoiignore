@@ -10,6 +10,5 @@ provisioning
 {{- fail "role must be desktop or server" -}}
 {{- end }}
 {{ if eq $role "server" -}}
-.config/Code
 .config/vm-curator
 {{ end -}}

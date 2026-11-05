@@ -22,6 +22,7 @@ base:
     - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
+    - configuration.vscode
     - chrome
     - handy
     - obsidian
@@ -50,6 +51,7 @@ base:
     - oh-my-zsh
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
+    - configuration.vscode
     - chrome
     - handy
     - obsidian

@@ -121,7 +121,7 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 
 ```
 {{ if eq (get . "role" | default "desktop") "server" }}
-.config/Code
+.config/vm-curator
 {{ end }}
 ```
 
@@ -135,10 +135,6 @@ To exclude configuration by machine role, add target paths to `.chezmoiignore`:
 ├── docs/
 │   └── salt.md                # Salt bootstrap, apply, and update workflow
 ├── dot_config/
-│   ├── Code/User/
-│   │   ├── extensions.txt      # VS Code extensions list
-│   │   ├── keybindings.json    # VS Code keybindings
-│   │   └── settings.json       # VS Code settings
 │   ├── shell/
 │   │   └── aliases.sh          # shared shell aliases
 │   └── vm-curator/
