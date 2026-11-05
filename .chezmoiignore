@@ -12,5 +12,4 @@ provisioning
 {{ if eq $role "server" -}}
 .config/Code
 .config/vm-curator
-install-vm-manager.sh
 {{ end -}}

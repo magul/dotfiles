@@ -44,4 +44,5 @@ base:
     - handy
     - obsidian
     - virtualization
+    - utm
 {% endif %}
