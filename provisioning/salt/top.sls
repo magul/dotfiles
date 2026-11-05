@@ -26,3 +26,4 @@ base:
     - match: grain
     - homebrew
     - jq
+    - neovim
