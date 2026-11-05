@@ -42,4 +42,5 @@ base:
     - vscode
     - chrome
     - handy
+    - obsidian
 {% endif %}

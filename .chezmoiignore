@@ -12,7 +12,6 @@ provisioning
 {{ if eq $role "server" -}}
 .config/Code
 .config/vm-curator
-install-obsidian.sh
 install-qemu.sh
 install-vm-manager.sh
 {{ end -}}

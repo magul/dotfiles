@@ -1,5 +1,16 @@
 {% set context = pillar.get('dotfiles', {}) %}
-{% if grains.get('os') in ['Debian', 'Ubuntu'] and context.get('role') == 'desktop' %}
+{% if grains.get('os') == 'MacOS' and context.get('role') == 'desktop' %}
+include:
+  - homebrew
+
+obsidian-install:
+  pkg.installed:
+    - name: obsidian
+    - options:
+      - --cask
+    - require:
+      - cmd: homebrew-install
+{% elif grains.get('os') in ['Debian', 'Ubuntu'] and context.get('role') == 'desktop' %}
 {% set home = context['home'] %}
 {% set arch = grains.get('osarch') %}
 {% set major = grains.get('osmajorrelease', 0) | int %}
