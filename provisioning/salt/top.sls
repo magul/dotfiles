@@ -31,3 +31,4 @@ base:
     - flux
     - k9s
     - hunk
+    - herdr

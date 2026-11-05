@@ -1,4 +1,15 @@
-{% if grains.get('os') in ['Debian', 'Ubuntu'] %}
+{% if grains.get('os') == 'MacOS' %}
+include:
+  - homebrew
+
+herdr-install:
+  pkg.installed:
+    - name: herdr
+    - options:
+      - --formula
+    - require:
+      - cmd: homebrew-install
+{% elif grains.get('os') in ['Debian', 'Ubuntu'] %}
 {% set context = pillar['dotfiles'] %}
 {% set home = context['home'] %}
 
