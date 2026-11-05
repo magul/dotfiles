@@ -6,6 +6,10 @@ and dependencies on Debian/Ubuntu and macOS. State files under
 operating system and machine role. There are no remaining chezmoi software
 installer scripts.
 
+The [configuration migration foundation](configuration.md) provides shared paths,
+ownership, and permission defaults. Configuration ownership moves one application
+at a time; existing configuration is still managed by chezmoi.
+
 Salt runs on demand with `salt-call --local`. No Salt master, key exchange,
 background minion, or open ports are needed. There is no automatic Salt hook in
 `chezmoi apply` or `chezmoi update`.

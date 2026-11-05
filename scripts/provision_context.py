@@ -1,6 +1,7 @@
 """Build local Salt pillar from the invoking user's chezmoi configuration."""
 
 import json
+import grp
 import os
 from pathlib import Path
 import pwd
@@ -53,6 +54,7 @@ def build_context(repo):
                 extensions.append(extension.lower())
 
     return {"dotfiles": {"role": role, "user": account.pw_name,
+                         "group": grp.getgrgid(account.pw_gid).gr_name,
                          "home": account.pw_dir, "vscode_extensions": extensions}}
 
 

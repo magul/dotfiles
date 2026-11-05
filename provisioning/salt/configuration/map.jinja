@@ -1,0 +1,15 @@
+{# Shared values for configuration states and their Jinja templates. #}
+{% set account = pillar['dotfiles'] %}
+{% set home = account['home'] %}
+{% set configuration = {
+    'user': account['user'],
+    'group': account['group'],
+    'home': home,
+    'role': account['role'],
+    'os': grains['os'],
+    'config_home': home ~ '/.config',
+    'vscode_user_dir': home ~ ('/Library/Application Support/Code/User' if grains['os'] == 'MacOS' else '/.config/Code/User'),
+    'directory_mode': '0700',
+    'file_mode': '0600',
+    'executable_mode': '0700',
+} %}
