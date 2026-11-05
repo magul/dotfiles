@@ -30,3 +30,4 @@ base:
     - helm
     - flux
     - k9s
+    - hunk
