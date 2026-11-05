@@ -34,3 +34,4 @@ base:
     - herdr
     - codex
     - claude-code
+    - opencode
