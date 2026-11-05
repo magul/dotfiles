@@ -43,4 +43,5 @@ base:
     - chrome
     - handy
     - obsidian
+    - virtualization
 {% endif %}

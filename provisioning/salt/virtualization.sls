@@ -1,5 +1,16 @@
 {% set context = pillar.get('dotfiles', {}) %}
-{% if grains.get('os') in ['Debian', 'Ubuntu'] and context.get('role') == 'desktop' %}
+{% if grains.get('os') == 'MacOS' and context.get('role') == 'desktop' %}
+include:
+  - homebrew
+
+virtualization-packages:
+  pkg.installed:
+    - name: qemu
+    - options:
+      - --formula
+    - require:
+      - cmd: homebrew-install
+{% elif grains.get('os') in ['Debian', 'Ubuntu'] and context.get('role') == 'desktop' %}
 
 virtualization-packages:
   pkg.installed:
