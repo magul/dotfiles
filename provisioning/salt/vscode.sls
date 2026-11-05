@@ -1,8 +1,21 @@
 {% set context = pillar.get('dotfiles', {}) %}
-{% if grains.get('os') in ['Debian', 'Ubuntu'] and context.get('role') == 'desktop' %}
+{% if grains.get('os') in ['Debian', 'Ubuntu', 'MacOS'] and context.get('role') == 'desktop' %}
 {% set user = context['user'] %}
 {% set home = context['home'] %}
+{% set code = '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' if grains['os'] == 'MacOS' else '/usr/bin/code' %}
 
+{% if grains['os'] == 'MacOS' %}
+include:
+  - homebrew
+
+vscode-package:
+  pkg.installed:
+    - name: visual-studio-code
+    - options:
+      - --cask
+    - require:
+      - cmd: homebrew-install
+{% else %}
 vscode-repository-prerequisites:
   pkg.installed:
     - pkgs:
@@ -25,19 +38,26 @@ vscode-package:
     - refresh: true
     - require:
       - pkgrepo: vscode-repository
+{% endif %}
 
 {% for extension in context['vscode_extensions'] %}
 vscode-extension-{{ extension }}:
   cmd.run:
-    - name: /usr/bin/code --install-extension {{ extension }}
-    - unless: /usr/bin/code --list-extensions | /usr/bin/grep -Fxi -- {{ extension }}
+    - name: >-
+        {{ code | quote }} --install-extension {{ extension }}
+    - unless: >-
+        {{ code | quote }} --list-extensions | /usr/bin/grep -Fxi -- {{ extension }}
+{% if grains['os'] != 'MacOS' %}
     - runas: {{ user | yaml_dquote }}
+{% endif %}
     - cwd: {{ home | yaml_dquote }}
     - shell: /bin/bash
     - env:
       - HOME: {{ home | yaml_dquote }}
+{% if grains['os'] != 'MacOS' %}
       - XDG_CONFIG_HOME: {{ (home ~ '/.config') | yaml_dquote }}
       - XDG_DATA_HOME: {{ (home ~ '/.local/share') | yaml_dquote }}
+{% endif %}
     - require:
       - pkg: vscode-package
 {% endfor %}

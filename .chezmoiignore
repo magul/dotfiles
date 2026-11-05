@@ -15,8 +15,6 @@ provisioning
 install-chrome.sh
 install-obsidian.sh
 install-handy.sh
-install-vscode.sh
-install-vscode-extensions.sh
 install-qemu.sh
 install-vm-manager.sh
 {{ end -}}

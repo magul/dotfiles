@@ -1,5 +1,5 @@
 # VS Code Extensions — managed by chezmoi
-# Salt reads this list on Debian/Ubuntu; the chezmoi installer reads it on macOS.
+# Salt reads this list on Debian/Ubuntu and macOS desktops.
 # Add extensions here, then apply provisioning. Removal does not uninstall them.
 
 # AI

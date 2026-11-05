@@ -156,7 +156,6 @@ dot_bashrc
 │   └── private_dotfiles.config.toml # Codex profile
 ├── dot_zprofile.tmpl           # ~/.zprofile (OS-specific)
 ├── dot_zshrc.tmpl              # ~/.zshrc (OS-specific)
-├── run_onchange_install-vscode-extensions.sh.tmpl  # auto-installs VS Code extensions
 ├── LICENSE
 └── README.md
 ```
