@@ -25,6 +25,7 @@ base:
   'os:MacOS':
     - match: grain
     - homebrew
+    - nodejs
     - jq
     - neovim
     - helm

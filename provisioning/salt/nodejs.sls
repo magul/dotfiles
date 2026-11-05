@@ -1,7 +1,22 @@
-{% if grains.get('os') in ['Debian', 'Ubuntu'] %}
+{% if grains.get('os') in ['Debian', 'Ubuntu', 'MacOS'] %}
 {% set context = pillar['dotfiles'] %}
 {% set home = context['home'] %}
 
+{% if grains['os'] == 'MacOS' %}
+include:
+  - homebrew
+
+nodejs-prerequisites:
+  pkg.installed:
+    - pkgs:
+      - curl
+      - git
+      - xz
+    - options:
+      - --formula
+    - require:
+      - cmd: homebrew-install
+{% else %}
 nodejs-prerequisites:
   pkg.installed:
     - pkgs:
@@ -11,6 +26,7 @@ nodejs-prerequisites:
       - xz-utils
     - refresh: true
     - cache_valid_time: 3600
+{% endif %}
 
 nvm-directory:
   file.directory:
@@ -22,10 +38,12 @@ nvm-install:
   cmd.script:
     - name: https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh
     - unless: test -s "$NVM_DIR/nvm.sh"
+{% if grains['os'] != 'MacOS' %}
     - runas: {{ context['user'] | yaml_dquote }}
+{% endif %}
     - cwd: {{ home | yaml_dquote }}
     - shell: /bin/bash
-    - prepend_path: /usr/local/bin:/usr/bin:/bin
+    - prepend_path: {{ '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin' if grains['os'] == 'MacOS' else '/usr/local/bin:/usr/bin:/bin' }}
     - env:
       - HOME: {{ home | yaml_dquote }}
       - NVM_DIR: {{ (home ~ '/.nvm') | yaml_dquote }}
@@ -46,10 +64,12 @@ nodejs-default:
         source "$NVM_DIR/nvm.sh" --no-use &&
         nvm use default >/dev/null 2>&1 &&
         test -x "$NVM_BIN/node" && test -x "$NVM_BIN/npm"
+{% if grains['os'] != 'MacOS' %}
     - runas: {{ context['user'] | yaml_dquote }}
+{% endif %}
     - cwd: {{ home | yaml_dquote }}
     - shell: /bin/bash
-    - prepend_path: /usr/local/bin:/usr/bin:/bin
+    - prepend_path: {{ '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin' if grains['os'] == 'MacOS' else '/usr/local/bin:/usr/bin:/bin' }}
     - env:
       - HOME: {{ home | yaml_dquote }}
       - NVM_DIR: {{ (home ~ '/.nvm') | yaml_dquote }}
