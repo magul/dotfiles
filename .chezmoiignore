@@ -13,7 +13,6 @@ provisioning
 .config/Code
 .config/vm-curator
 install-obsidian.sh
-install-handy.sh
 install-qemu.sh
 install-vm-manager.sh
 {{ end -}}

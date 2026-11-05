@@ -41,4 +41,5 @@ base:
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
     - chrome
+    - handy
 {% endif %}
