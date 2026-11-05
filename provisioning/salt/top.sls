@@ -3,6 +3,7 @@ base:
     - foundation
   'G@os:Debian or G@os:Ubuntu':
     - match: compound
+    - configuration.shell-aliases
     - jq
     - neovim
     - configuration.neovim
@@ -31,6 +32,7 @@ base:
 {% endif %}
   'os:MacOS':
     - match: grain
+    - configuration.shell-aliases
     - homebrew
     - nodejs
     - jq

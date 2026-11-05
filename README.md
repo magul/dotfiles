@@ -98,7 +98,7 @@ home directory:
 
 | Source naming | Target | Notes |
 |---------------|--------|-------|
-| `dot_config/shell/aliases.sh` | `~/.config/shell/aliases.sh` | `dot_` prefix becomes `.` |
+| `dot_zprofile.tmpl` | `~/.zprofile` | `dot_` prefix becomes `.` |
 | `dot_zshrc.tmpl` | `~/.zshrc` | `.tmpl` suffix = template |
 
 `docs/`, `scripts/`, and `provisioning/` are excluded from chezmoi's home-directory
@@ -130,9 +130,6 @@ the state and `top.sls`; see the [configuration migration guide](docs/configurat
 ├── .gitignore
 ├── docs/
 │   └── salt.md                # Salt bootstrap, apply, and update workflow
-├── dot_config/
-│   └── shell/
-│       └── aliases.sh          # shared shell aliases
 ├── provisioning/
 │   ├── config/minion          # repository-local Salt configuration
 │   └── salt/                  # software states and top.sls selection
