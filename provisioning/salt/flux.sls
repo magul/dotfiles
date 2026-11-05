@@ -1,4 +1,17 @@
-{% if grains.get('os') in ['Debian', 'Ubuntu'] %}
+{% if grains.get('os') == 'MacOS' %}
+include:
+  - homebrew
+
+flux-install:
+  pkg.installed:
+    - name: fluxcd/tap/flux
+    - taps:
+      - fluxcd/tap
+    - options:
+      - --formula
+    - require:
+      - cmd: homebrew-install
+{% elif grains.get('os') in ['Debian', 'Ubuntu'] %}
 
 flux-prerequisites:
   pkg.installed:

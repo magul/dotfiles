@@ -28,3 +28,4 @@ base:
     - jq
     - neovim
     - helm
+    - flux
