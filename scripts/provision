@@ -51,7 +51,7 @@ fi
 
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 # A private directory also isolates keys/cache from any installed minion service.
-runtime_dir="$(mktemp -d /tmp/chezmoi-salt.XXXXXX)"
+runtime_dir="$(mktemp -d /tmp/dotfiles-salt.XXXXXX)"
 trap 'rm -rf -- "$runtime_dir"' EXIT
 cat "$repo_dir/provisioning/config/minion" > "$runtime_dir/minion"
 if $macos; then
@@ -64,8 +64,15 @@ fi
 printf '\ncachedir: %s/cache\npki_dir: %s/pki\nextension_modules: %s/extmods\n' \
     "$runtime_dir" "$runtime_dir" "$runtime_dir" >> "$runtime_dir/minion"
 mkdir "$runtime_dir/pillar"
-"$python_cmd" "$repo_dir/scripts/provision_context.py" > "$runtime_dir/pillar/context.sls"
-printf 'base:\n  "*":\n    - context\n' > "$runtime_dir/pillar/top.sls"
+
+# Salt loads static grains beside its minion config. Preserve the isolated
+# runtime while reading the target user's own Salt grains file, also under sudo.
+grains_file="$("$python_cmd" "$repo_dir/scripts/provision_context.py" --grains-file)"
+if [[ ! -r "$grains_file" ]]; then
+    echo "Cannot read $grains_file. Set role; see docs/salt.md#machine-role." >&2
+    exit 1
+fi
+cp -- "$grains_file" "$runtime_dir/grains"
 
 call_salt() {
     salt-call --local --config-dir "$runtime_dir" \
@@ -73,6 +80,11 @@ call_salt() {
         --pillar-root "$runtime_dir/pillar" \
         --log-file /dev/null --retcode-passthrough "$@"
 }
+
+call_salt --out=json grains.get role > "$runtime_dir/role.json"
+"$python_cmd" "$repo_dir/scripts/provision_context.py" \
+    < "$runtime_dir/role.json" > "$runtime_dir/pillar/context.sls"
+printf 'base:\n  "*":\n    - context\n' > "$runtime_dir/pillar/top.sls"
 
 # The Homebrew package provider can only load once brew exists. Bootstrap in a
 # separate Salt process, then load the full stack with that provider available.

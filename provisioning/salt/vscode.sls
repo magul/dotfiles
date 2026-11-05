@@ -24,7 +24,7 @@ vscode-repository-prerequisites:
 
 vscode-repository:
   pkgrepo.managed:
-    # Reuse the previous chezmoi installer's repository and key paths.
+    # Reuse existing repository and key paths when adopting an installation.
     - name: deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
     - file: /etc/apt/sources.list.d/vscode.list
     - key_url: https://packages.microsoft.com/keys/microsoft.asc

@@ -3,24 +3,29 @@
 Salt manages home-directory configuration, software installation, and dependencies
 on Debian/Ubuntu and macOS. State files under `provisioning/salt/` define the
 desired system; `top.sls` selects states by operating system and machine role.
-Chezmoi still initializes the repository and supplies the machine role.
+Clone the repository with Git. The runner reads the machine role from a Salt
+custom grain.
 
 The [configuration guide](configuration.md) describes shared paths, ownership,
 and permission defaults. All tracked configuration sources now live in Salt's
 file tree.
 
 Salt runs on demand with `salt-call --local`. No Salt master, key exchange,
-background minion, or open ports are needed. There is no automatic Salt hook in
-`chezmoi apply` or `chezmoi update`.
+background minion, or open ports are needed. Run the stack explicitly through
+`scripts/provision`.
 
 ## Bootstrap on a fresh system
 
-First install chezmoi and initialize this repository using the main README's
-bootstrap instructions. Install Salt separately using the steps below, preview
-and apply the Salt states for software and configuration. Chezmoi alone does
-not deploy the managed files or install software.
-These instructions cover Debian/Ubuntu and macOS; the runner requires Bash,
-Python 3, and chezmoi. On Debian/Ubuntu, install Python with
+Install Git and clone this repository as described in the main README's
+[bootstrap instructions](../README.md#bootstrap-new-machine). The examples below
+use `~/dotfiles`; substitute your actual checkout path if different. Existing
+checkouts under `~/.local/share/chezmoi` can stay there.
+
+Install Salt separately using the steps below, set up the
+[machine role](#machine-role), then preview and apply the Salt states for software
+and configuration.
+These instructions cover Debian/Ubuntu and macOS; the runner requires Bash
+and Python 3. On Debian/Ubuntu, install Python with
 `sudo apt-get install -y python3` if needed. On macOS, the runner looks for
 Python in Salt's standalone installation before falling back to `python3` on
 PATH; Homebrew is not required to start the runner.
@@ -79,7 +84,7 @@ The Homebrew installer may need Apple's Command Line Tools. If missing, run
 Mac, prepare administrator credentials with `sudo -v`, then run Salt without sudo:
 
 ```bash
-cd "$(chezmoi source-path)"
+cd "$HOME/dotfiles"
 bash scripts/provision preview
 sudo -v
 bash scripts/provision apply
@@ -104,7 +109,7 @@ On Debian/Ubuntu, run both preview and apply as root so they use the same packag
 manager context:
 
 ```bash
-cd "$(chezmoi source-path)"
+cd "$HOME/dotfiles"
 sudo bash scripts/provision preview
 sudo bash scripts/provision apply
 sudo bash scripts/provision apply  # should report no further changes
@@ -121,25 +126,64 @@ apply uses `test=False`. The runner returns Salt's failure status.
 
 The runner uses the repository's configuration and state tree, and removes its
 private temporary cache and keys after each run. It does not modify `/etc/salt`.
-It runs with the invoking user's
-privileges. When invoked through sudo, it reads the original user's chezmoi
-configuration through `sudo -H -u "$SUDO_USER"`. Run from your normal account,
-using sudo for system provisioning; direct root logins are rejected.
+It targets the invoking user's account. When invoked through sudo, it resolves
+`SUDO_USER` through the operating system's account database. Run from your normal account, using sudo for system provisioning;
+direct root logins are rejected.
 
-The runner passes your existing chezmoi `desktop`/`server` role and account into
-Salt as local pillar data. A missing role retains chezmoi's legacy desktop
-default; an invalid role or unreadable configuration stops provisioning.
+The runner passes your `desktop`/`server` role and account into Salt as local
+pillar data. A missing, invalid, or unreadable role grain stops provisioning.
 Desktop-only states are skipped on servers. Changing the role to server does
 not uninstall existing desktop software. User commands run as the original
 user with their home and platform-appropriate data directories. Salt also manages
 application settings and declarative lists.
+
+## Machine role
+
+The machine role is Salt's static custom grain `role` in
+`~/.config/salt/grains` on both Linux and macOS:
+
+```yaml
+role: desktop  # or server
+```
+
+This is a standard Salt grains file: there is no enclosing `grains:` key.
+See [Salt's grains documentation](https://docs.saltproject.io/en/latest/topics/grains/index.html).
+There is no implicit desktop fallback. The runner copies this file beside its
+isolated minion configuration and asks Salt to read the grain, then passes the
+validated role into the existing pillar context. It does not load `/etc/salt/minion`
+or start a daemon. Each invocation reads the current grains file.
+The path is resolved from the target account's home directory, including under
+sudo; inherited `HOME` and `XDG_CONFIG_HOME` do not change it.
+This user path is the runner's convention; Salt loads the copied file through
+its normal configuration-directory mechanism.
+
+Choose `desktop` or `server` explicitly. On an existing machine, preserve its
+current role when setting up the grains file.
+
+As your normal user, create Salt's configuration directory if necessary, then
+edit the grains file:
+
+```bash
+mkdir -p "$HOME/.config/salt"
+chmod 700 "$HOME/.config/salt"
+${EDITOR:-vi} "$HOME/.config/salt/grains"
+chmod 600 "$HOME/.config/salt/grains"
+```
+
+Add or update only `role`, preserving any other grains. For a new file,
+use your own account as owner and mode `0600`.
+Grains are machine metadata; keep secrets outside this file.
+
+The grain is local to each machine and is not managed by this stack. Preview
+before applying a role change. Servers skip desktop states without removing
+existing resources.
 
 ## Apply changes committed later
 
 On each machine, pull the repository, then preview and apply Salt states:
 
 ```bash
-cd "$(chezmoi source-path)"
+cd "$HOME/dotfiles"
 git pull --ff-only
 sudo bash scripts/provision preview
 sudo bash scripts/provision apply
@@ -150,10 +194,9 @@ before proceeding. Review the previews before running the corresponding apply
 command. Salt preview reports planned software and configuration changes.
 The Salt commands above are for Debian/Ubuntu; omit `sudo` on macOS.
 
-If you normally use `chezmoi update`, follow it with the two
-`scripts/provision` commands above. Salt changes
-are applied only when you run the runner; pulling commits alone does not apply
-them. Re-running Salt evaluates the current desired state each time.
+Use `git pull --ff-only` to update this checkout. Salt changes are applied only
+when you run the runner; pulling commits alone does not apply them. Re-running
+Salt evaluates the current desired state each time.
 
 Updating these states does not upgrade the Salt runtime. Upgrade Salt separately
 through apt (within the pinned LTS series) or a newer macOS installer. Review the
@@ -164,8 +207,8 @@ official installation guide before changing the pinned major version.
 Add an SLS file under `provisioning/salt/` and list its name in `top.sls`.
 Express dependencies using Salt requisites such as `require`, and keep each
 state scoped to the supported operating systems and machine roles. Read the
-role and target account from the `dotfiles` pillar; chezmoi remains the source
-of role selection. Keep software installation states separate from configuration
+role and target account from the `dotfiles` pillar; the `role` grain is the
+source of role selection. Keep software installation states separate from configuration
 states under `provisioning/salt/configuration/`.
 
 Validate with a preview, an apply, and a second apply that reports no changes.

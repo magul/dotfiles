@@ -22,7 +22,7 @@ chrome-repository-prerequisites:
 
 chrome-repository:
   pkgrepo.managed:
-    # Keep the previous chezmoi installer's repository and key paths.
+    # Keep existing repository and key paths when adopting an installation.
     - name: deb [arch={{ arch }} signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main
     - file: /etc/apt/sources.list.d/google-chrome.list
     - key_url: https://dl.google.com/linux/linux_signing_key.pub

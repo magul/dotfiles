@@ -1,4 +1,4 @@
-"""Build local Salt pillar from the invoking user's chezmoi configuration."""
+"""Build local Salt pillar from the invoking account and Salt's role grain."""
 
 import json
 import grp
@@ -6,12 +6,10 @@ import os
 from pathlib import Path
 import pwd
 import re
-import shutil
-import subprocess
 import sys
 
 
-def build_context(repo):
+def target_account():
     if os.geteuid() == 0:
         username = os.environ.get("SUDO_USER")
         if not username or username == "root":
@@ -21,26 +19,17 @@ def build_context(repo):
         account = pwd.getpwuid(os.getuid())
     if account.pw_uid == 0:
         raise ValueError("The provisioning target must be a non-root user.")
+    return account
 
-    # sudo may remove user-installed executables from PATH.
-    chezmoi = shutil.which("chezmoi")
-    if not chezmoi:
-        for directory in (Path(account.pw_dir) / ".local/bin", Path("/opt/homebrew/bin")):
-            candidate = directory / "chezmoi"
-            if candidate.is_file() and os.access(candidate, os.X_OK):
-                chezmoi = str(candidate)
-                break
-    if not chezmoi:
-        raise ValueError("chezmoi is required to read the machine role.")
 
-    command = [chezmoi, "--source", str(repo), "execute-template",
-               '{{ dict "role" (get . "role" | default "desktop") | toJson }}']
-    if os.geteuid() == 0:
-        command = ["sudo", "-H", "-u", account.pw_name, "--", *command]
-    data = json.loads(subprocess.check_output(command, text=True))
-    role = data.get("role")
+def build_context(repo, role):
+    account = target_account()
+
     if role not in ("desktop", "server"):
-        raise ValueError("chezmoi role must be desktop or server.")
+        raise ValueError(
+            "Salt grain role must be desktop or server. "
+            "Set it in ~/.config/salt/grains; see docs/salt.md#machine-role."
+        )
 
     extensions = []
     if role == "desktop":
@@ -60,6 +49,12 @@ def build_context(repo):
 
 if __name__ == "__main__":
     try:
-        print(json.dumps(build_context(Path(__file__).resolve().parent.parent)))
-    except (ValueError, KeyError, OSError, subprocess.CalledProcessError) as error:
+        if sys.argv[1:] == ["--grains-file"]:
+            print(Path(target_account().pw_dir) / ".config/salt/grains")
+            sys.exit(0)
+        if sys.argv[1:]:
+            raise ValueError("Usage: provision_context.py [--grains-file]")
+        role = json.load(sys.stdin)["local"]
+        print(json.dumps(build_context(Path(__file__).resolve().parent.parent, role)))
+    except (ValueError, KeyError, OSError) as error:
         sys.exit(f"Cannot read provisioning context: {error}")

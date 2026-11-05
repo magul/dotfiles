@@ -1,15 +1,16 @@
-# Configuration migration
+# Configuration
 
 All tracked configuration is now managed by Salt. States under
-`provisioning/salt/configuration/` define the managed files. Chezmoi still
-initializes the repository and supplies the machine role.
+`provisioning/salt/configuration/` define the managed files. Clone the repository
+with Git; the runner reads Salt's `role` grain.
 
 ## Shared context
 
 `scripts/provision_context.py` supplies `dotfiles:user`, `dotfiles:group`,
 `dotfiles:home`, and `dotfiles:role` as local pillar data. User, primary group,
 and home come from the operating system's account database, including when
-Linux provisioning runs through sudo. The role still comes from chezmoi.
+Linux provisioning runs through sudo. The role comes from Salt's `role`
+grain, loaded from `~/.config/salt/grains` through the isolated runner configuration.
 
 The foundation checks that these values are strings. Configuration states and
 templates import the shared map:
@@ -29,8 +30,7 @@ they do not change existing directories or software installation states.
 
 ## Source files and states
 
-Store source files under `provisioning/salt/files/<application>/`. These paths
-are already excluded from chezmoi targets through the `provisioning` ignore rule.
+Store source files under `provisioning/salt/files/<application>/`.
 Use `file.managed` for individual files and `template: jinja` only when rendering
 is needed. Manage each configuration directory's owner, group, and mode explicitly.
 
@@ -72,17 +72,15 @@ the source or a separate backup outside the runner's temporary directory. Salt's
 `backup: minion` stores backups in its cache, which this runner removes after
 each run; it does not provide a persistent backup here.
 
-## Handoff from chezmoi
+## Adopting existing configuration
 
 1. Inspect the current destination and preserve local changes before replacement.
-2. Move its source into Salt's file tree and add the configuration state.
-3. Remove the corresponding chezmoi source in the same change, ensuring only Salt
-   manages the destination. Keep the existing destination available for adoption.
+2. Add its source to Salt's file tree and define a configuration state.
+3. Ensure only Salt manages the destination. Keep the existing destination
+   available for adoption.
 4. Check rendered content, destination paths, role selection, owner, group, and
    permissions on Linux and macOS. Preserve desktop-only selection where needed.
 5. Preview, apply, then confirm a second apply reports no changes. Validate on
-   the target platform before treating the migration as complete.
+   the target platform before treating the change as complete.
 
-Shell startup files have been migrated. Local secrets and `.zshrc.local` remain
-unmanaged. Keep chezmoi responsible for machine role selection until a separate
-transition replaces that bootstrap dependency.
+Local secrets and `.zshrc.local` remain unmanaged. Bootstrap uses Git and Salt.
