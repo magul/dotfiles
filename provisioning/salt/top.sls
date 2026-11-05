@@ -29,3 +29,4 @@ base:
     - neovim
     - helm
     - flux
+    - k9s
