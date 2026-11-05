@@ -33,3 +33,4 @@ base:
     - hunk
     - herdr
     - codex
+    - claude-code
