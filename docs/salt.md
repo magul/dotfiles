@@ -67,8 +67,8 @@ sudo launchctl stop com.saltstack.salt.minion
 salt-call --version
 ```
 
-Salt now bootstraps Homebrew; other macOS application installations remain in
-chezmoi during this first migration step. Install Salt from the standalone `.pkg`
+Salt bootstraps Homebrew and manages the macOS packages migrated so far; the
+remaining application installations stay in chezmoi. Install Salt from the standalone `.pkg`
 above, independently of Homebrew. The runner detects the usual Salt and Homebrew
 paths on Intel and Apple Silicon Macs and runs as your current user.
 
@@ -89,6 +89,11 @@ The Homebrew installer runs non-interactively as your user and uses sudo only
 where required internally. If credentials expire, run `sudo -v` and retry. The
 runner rejects root execution on macOS. Already-installed Homebrew is skipped.
 See the [Homebrew installation guide](https://docs.brew.sh/Installation.html).
+
+When Homebrew is missing, preview shows only its bootstrap state because Salt's
+Homebrew package provider cannot load yet. Apply bootstraps Homebrew in a separate
+Salt process, then runs the full stack. Rerun preview afterward to inspect package
+states with the provider available.
 
 macOS state rendering is checked on Linux; installation on a Mac remains untested.
 

@@ -25,3 +25,4 @@ base:
   'os:MacOS':
     - match: grain
     - homebrew
+    - jq

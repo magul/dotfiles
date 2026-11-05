@@ -67,8 +67,27 @@ mkdir "$runtime_dir/pillar"
 "$python_cmd" "$repo_dir/scripts/provision_context.py" > "$runtime_dir/pillar/context.sls"
 printf 'base:\n  "*":\n    - context\n' > "$runtime_dir/pillar/top.sls"
 
-salt-call --local --config-dir "$runtime_dir" \
-    --file-root "$repo_dir/provisioning/salt" \
-    --pillar-root "$runtime_dir/pillar" \
-    --log-file /dev/null --retcode-passthrough \
-    state.apply "test=$test_mode"
+call_salt() {
+    salt-call --local --config-dir "$runtime_dir" \
+        --file-root "$repo_dir/provisioning/salt" \
+        --pillar-root "$runtime_dir/pillar" \
+        --log-file /dev/null --retcode-passthrough "$@"
+}
+
+# The Homebrew package provider can only load once brew exists. Bootstrap in a
+# separate Salt process, then load the full stack with that provider available.
+if $macos && ! command -v brew >/dev/null 2>&1; then
+    call_salt state.apply homebrew "test=$test_mode"
+    if [[ "$test_mode" == True ]]; then
+        echo "Homebrew is missing. Apply to bootstrap it, then rerun preview for package changes."
+        exit 0
+    fi
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "Homebrew bootstrap finished but brew is not available on PATH." >&2
+        exit 1
+    fi
+    export HOMEBREW_PREFIX="$(brew --prefix)"
+    printf '\nproviders:\n  pkg: mac_brew_pkg\n' >> "$runtime_dir/minion"
+fi
+
+call_salt state.apply "test=$test_mode"
