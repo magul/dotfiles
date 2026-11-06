@@ -43,13 +43,9 @@ pyenv-build-dependencies:
     - refresh: true
     - cache_valid_time: 3600
 
-pyenv-directory:
-  file.directory:
-    - name: {{ (home ~ '/.pyenv') | yaml_dquote }}
-    - user: {{ context['user'] | yaml_dquote }}
-    - mode: '0700'
-
 # Ensure repositories exist without automatically pulling or changing revisions.
+# git.cloned rejects an existing non-repository target, so clone before
+# managing the directory's permissions.
 pyenv-install:
   git.cloned:
     - name: https://github.com/pyenv/pyenv.git
@@ -57,7 +53,14 @@ pyenv-install:
     - user: {{ context['user'] | yaml_dquote }}
     - require:
       - pkg: pyenv-build-dependencies
-      - file: pyenv-directory
+
+pyenv-directory:
+  file.directory:
+    - name: {{ (home ~ '/.pyenv') | yaml_dquote }}
+    - user: {{ context['user'] | yaml_dquote }}
+    - mode: '0700'
+    - require:
+      - git: pyenv-install
 
 pyenv-virtualenv:
   git.cloned:

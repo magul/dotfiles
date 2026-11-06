@@ -25,14 +25,10 @@ oh-my-zsh-prerequisites:
     - cache_valid_time: 3600
 {% endif %}
 
-oh-my-zsh-directory:
-  file.directory:
-    - name: {{ (home ~ '/.oh-my-zsh') | yaml_dquote }}
-    - user: {{ context['user'] | yaml_dquote }}
-    - mode: '0700'
-
 # A clone installs the framework without touching .zshrc or the login shell.
 # Adopt an existing checkout without pulling or changing its revision.
+# git.cloned rejects an existing non-repository target, so clone before
+# managing the directory's permissions.
 oh-my-zsh-install:
   git.cloned:
     - name: https://github.com/ohmyzsh/ohmyzsh.git
@@ -42,5 +38,12 @@ oh-my-zsh-install:
 {% endif %}
     - require:
       - pkg: oh-my-zsh-prerequisites
-      - file: oh-my-zsh-directory
+
+oh-my-zsh-directory:
+  file.directory:
+    - name: {{ (home ~ '/.oh-my-zsh') | yaml_dquote }}
+    - user: {{ context['user'] | yaml_dquote }}
+    - mode: '0700'
+    - require:
+      - git: oh-my-zsh-install
 {% endif %}
