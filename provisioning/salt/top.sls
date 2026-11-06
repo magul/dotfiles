@@ -7,6 +7,7 @@ base:
     - configuration.zprofile
     - configuration.zshrc
     - jq
+    - gh
     - neovim
     - configuration.neovim
     - helm
@@ -41,6 +42,7 @@ base:
     - homebrew
     - nodejs
     - jq
+    - gh
     - neovim
     - configuration.neovim
     - helm
