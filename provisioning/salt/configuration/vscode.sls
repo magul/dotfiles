@@ -25,6 +25,6 @@ vscode-{{ name }}:
     - mode: {{ configuration.file_mode | yaml_dquote }}
     - require:
       - file: vscode-config-directory
-      - pkg: vscode-package
+      - {{ 'pkg' if grains['os'] == 'MacOS' else 'cmd' }}: vscode-package
 {% endfor %}
 {% endif %}

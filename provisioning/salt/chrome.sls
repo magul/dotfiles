@@ -14,28 +14,38 @@ chrome-package:
 {% set arch = grains.get('osarch') %}
 {% if arch in ['amd64', 'arm64'] %}
 
-chrome-repository-prerequisites:
+chrome-prerequisites:
   pkg.installed:
     - pkgs:
       - ca-certificates
-      - gnupg
-
-chrome-repository:
-  pkgrepo.managed:
-    # Keep existing repository and key paths when adopting an installation.
-    - name: deb [arch={{ arch }} signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main
-    - file: /etc/apt/sources.list.d/google-chrome.list
-    - key_url: https://dl.google.com/linux/linux_signing_key.pub
-    - aptkey: false
-    - require:
-      - pkg: chrome-repository-prerequisites
-
-chrome-package:
-  pkg.installed:
-    - name: google-chrome-stable
+      - curl
     - refresh: true
+    - cache_valid_time: 3600
+
+# Install the vendor package once. Its maintainer scripts and the daily
+# /etc/cron.daily/google-chrome job then own the apt source and keyring, and
+# apt upgrades Chrome from there.
+chrome-package:
+  cmd.run:
+    - name: |
+        set -euo pipefail
+        download_dir=$(mktemp -d)
+        trap 'rm -rf -- "$download_dir"' EXIT
+        curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_{{ arch }}.deb \
+            -o "$download_dir/google-chrome.deb"
+        chmod 0755 "$download_dir"
+        chmod 0644 "$download_dir/google-chrome.deb"
+        apt-get update
+        apt-get install --yes "$download_dir/google-chrome.deb"
+    - unless: >-
+        dpkg-query -W -f='${Status}' google-chrome-stable 2>/dev/null |
+        grep -Fxq 'install ok installed'
+    - shell: /bin/bash
+    - prepend_path: /usr/local/bin:/usr/bin:/bin
+    - env:
+      - DEBIAN_FRONTEND: noninteractive
     - require:
-      - pkgrepo: chrome-repository
+      - pkg: chrome-prerequisites
 {% else %}
 
 chrome-unsupported-architecture:
