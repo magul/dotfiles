@@ -3,20 +3,31 @@
 set -euo pipefail
 
 usage() {
-    echo "Usage: $0 [preview|apply]"
-    echo "Defaults to preview. Requires salt-call on PATH."
+    echo "Usage: $0 [preview|apply] [state ...]"
+    echo "Defaults to preview of the whole stack. Name states from"
+    echo "provisioning/salt (e.g. pyenv, configuration.zshrc) to run only"
+    echo "those and their includes. Requires salt-call on PATH."
 }
 
-if (( $# > 1 )); then
-    usage >&2
-    exit 2
-fi
 case "${1:-preview}" in
     preview) test_mode=True ;;
     apply) test_mode=False ;;
     -h|--help) usage; exit 0 ;;
     *) usage >&2; exit 2 ;;
 esac
+(( $# > 0 )) && shift
+
+targets=()
+for target in "$@"; do
+    if [[ ! "$target" =~ ^[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*$ ]]; then
+        echo "Invalid state name: $target" >&2
+        usage >&2
+        exit 2
+    fi
+    targets+=("$target")
+done
+# Salt accepts a comma-separated list of SLS names; empty means top.sls.
+state_targets="$(IFS=,; echo "${targets[*]}")"
 
 macos=false
 python_cmd=python3
@@ -102,4 +113,8 @@ if $macos && ! command -v brew >/dev/null 2>&1; then
     printf '\nproviders:\n  pkg: mac_brew_pkg\n' >> "$runtime_dir/minion"
 fi
 
-call_salt state.apply "test=$test_mode"
+if [[ -n "$state_targets" ]]; then
+    call_salt state.apply "$state_targets" "test=$test_mode"
+else
+    call_salt state.apply "test=$test_mode"
+fi

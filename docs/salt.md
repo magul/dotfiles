@@ -124,6 +124,17 @@ Other operating systems have no package states selected by this stack.
 Omitting the argument defaults to preview. Preview uses Salt's `test=True`;
 apply uses `test=False`. The runner returns Salt's failure status.
 
+To roll out changes gradually, name one or more state files after the mode.
+Only those states and the files they include run, regardless of `top.sls`:
+
+```bash
+sudo bash scripts/provision preview configuration.zshrc
+sudo bash scripts/provision apply pyenv virtualization
+```
+
+State names are SLS paths under `provisioning/salt/` without `.sls`, using dots
+for subdirectories. Finish with a full apply so the whole stack converges.
+
 The runner uses the repository's configuration and state tree, and removes its
 private temporary cache and keys after each run. It does not modify `/etc/salt`.
 It targets the invoking user's account. When invoked through sudo, it resolves
