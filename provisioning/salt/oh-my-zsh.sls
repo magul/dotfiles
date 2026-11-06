@@ -25,7 +25,8 @@ oh-my-zsh-prerequisites:
     - cache_valid_time: 3600
 {% endif %}
 
-# A clone installs the framework without touching .zshrc or the login shell.
+# A clone installs the framework without touching .zshrc or the login shell
+# (login-shell manages the latter on Debian/Ubuntu).
 # Adopt an existing checkout without pulling or changing its revision.
 # git.cloned rejects an existing non-repository target, so clone before
 # managing the directory's permissions.

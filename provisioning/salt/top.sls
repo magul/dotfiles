@@ -23,6 +23,7 @@ base:
     - configuration.opencode
     - pyenv
     - oh-my-zsh
+    - login-shell
 {% if pillar.get('dotfiles', {}).get('role') == 'desktop' %}
     - vscode
     - configuration.vscode
