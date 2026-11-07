@@ -14,10 +14,21 @@ codex-config-directory:
     - require:
       - test: configuration-context
 
+# Codex stores its own state (trusted projects, notices) in the active profile,
+# so merge only the keys below and keep whatever Codex has added.
+# Requires the toml library in Salt's Python; see docs/salt.md.
 codex-profile:
-  file.managed:
+  file.serialize:
     - name: {{ (configuration.home ~ '/.codex/dotfiles.config.toml') | yaml_dquote }}
-    - source: salt://files/codex/dotfiles.config.toml
+    - serializer: toml
+    - merge_if_exists: true
+    - dataset:
+        tui:
+          status_line:
+            - model-with-reasoning
+            - context-remaining
+            - five-hour-limit
+            - weekly-limit
     - user: {{ configuration.user | yaml_dquote }}
     - group: {{ configuration.group | yaml_dquote }}
     - mode: {{ configuration.file_mode | yaml_dquote }}

@@ -53,12 +53,14 @@ printf 'Package: salt-*\nPin: version 3008.*\nPin-Priority: 1001\n' \
 sudo apt-get update
 sudo apt-get install -y salt-minion
 sudo systemctl disable --now salt-minion
+sudo salt-pip install toml==0.10.2
 salt-call --version
 exit
 ```
 
 The `salt-minion` package supplies `salt-call`. Disable the daemon on this fresh
-masterless installation; the runner invokes Salt directly.
+masterless installation; the runner invokes Salt directly. `salt-pip` adds the
+TOML library to Salt's bundled Python; states that merge TOML files need it.
 The package series and repository setup follow the
 [official DEB installation guide](https://docs.saltproject.io/salt/install-guide/en/latest/topics/install-by-operating-system/linux-deb.html).
 
@@ -71,8 +73,13 @@ the minion, stop it:
 
 ```bash
 sudo launchctl stop com.saltstack.salt.minion
+sudo /opt/salt/salt-pip install toml==0.10.2
 salt-call --version
 ```
+
+As on Debian/Ubuntu, `salt-pip` adds the TOML library that states merging TOML
+files need. Install it once with `sudo`; the runner itself runs as your user and
+cannot write to Salt's installation.
 
 Salt bootstraps Homebrew and manages macOS software through Homebrew and native
 user installers. Install Salt from the standalone `.pkg` above, independently
