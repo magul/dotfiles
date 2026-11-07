@@ -8,6 +8,7 @@ base:
     - configuration.zshrc
     - jq
     - gh
+    - mosh
     - neovim
     - configuration.neovim
     - helm
@@ -44,6 +45,7 @@ base:
     - nodejs
     - jq
     - gh
+    - mosh
     - neovim
     - configuration.neovim
     - helm
