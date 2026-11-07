@@ -31,6 +31,7 @@ base:
     - chrome
     - handy
     - obsidian
+    - calibre
     - vm-curator
     - configuration.vm-curator
 {% endif %}
@@ -65,6 +66,7 @@ base:
     - chrome
     - handy
     - obsidian
+    - calibre
     - virtualization
     - utm
 {% endif %}
