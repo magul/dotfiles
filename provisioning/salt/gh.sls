@@ -21,17 +21,18 @@ gh-prerequisites:
 
 # Use GitHub's official apt repository so apt keeps gh current; distribution
 # packages lag far behind upstream releases.
+# Track upstream rather than downloading once: GitHub rotates this signing key
+# (the 2022 key expired 2026-09-05), and a stale copy breaks apt-get update.
 gh-keyring:
-  cmd.run:
-    - name: |
-        set -euo pipefail
-        install -d -m 0755 /etc/apt/keyrings
-        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-            -o /etc/apt/keyrings/githubcli-archive-keyring.gpg
-        chmod 0644 /etc/apt/keyrings/githubcli-archive-keyring.gpg
-    - creates: /etc/apt/keyrings/githubcli-archive-keyring.gpg
-    - shell: /bin/bash
-    - prepend_path: /usr/local/bin:/usr/bin:/bin
+  file.managed:
+    - name: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    - source: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+    - skip_verify: true
+    - makedirs: true
+    - dir_mode: '0755'
+    - user: root
+    - group: root
+    - mode: '0644'
     - require:
       - pkg: gh-prerequisites
 
@@ -45,12 +46,13 @@ gh-repository:
     - group: root
     - mode: '0644'
     - require:
-      - cmd: gh-keyring
+      - file: gh-keyring
 
 gh-apt-update:
   cmd.run:
     - name: apt-get update
     - onchanges:
+      - file: gh-keyring
       - file: gh-repository
 
 gh-install:
