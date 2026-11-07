@@ -1,3 +1,4 @@
+{% from "configuration/map.jinja" import configuration with context %}
 {
   "model": "opus",
   "statusLine": {
@@ -12,5 +13,19 @@
   },
   "agentPushNotifEnabled": true,
   "voiceEnabled": true,
-  "useAutoModeDuringPlan": false
+  "useAutoModeDuringPlan": false,
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume|clear|compact|fork)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": {{ ("bash '" ~ configuration.home ~ "/.claude/hooks/herdr-agent-state.sh' session") | tojson }},
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }
