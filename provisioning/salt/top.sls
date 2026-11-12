@@ -14,6 +14,7 @@ base:
     - helm
     - flux
     - k9s
+    - velero
     - hunk
     - configuration.hunk
     - herdr
@@ -51,6 +52,7 @@ base:
     - helm
     - flux
     - k9s
+    - velero
     - hunk
     - configuration.hunk
     - herdr
